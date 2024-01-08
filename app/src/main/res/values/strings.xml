@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Chat App</string>
+    <string name="developer">Developed By Pratham Rathod</string>
+    <string name="title_chat">Chat</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_users">Users</string>
+
+    <string name="edUserNumHint">Enter Mobile Number Here</string>
+    <string name="edUserNameHint">Enter Your Name Here</string>
+    <string name="edOtpHint">Enter OTP Here</string>
+
+    <string name="btnSubmit">Submit</string>
+    <string name="btnVerifyOtp">Verify Otp</string>
+    <string name="btnUpdate">Update Profile</string>
+
+</resources>

@@ -61,7 +61,7 @@ public class Login extends AppCompatActivity {
             }
             // if user entering Name
         } else if (edNum.getHint().toString().equals(getResources().getString(R.string.edUserNameHint))) {
-            UserModel newUser = new UserModel();
+            UsersModel newUser = new UsersModel();
             newUser.setUserId(auth.getCurrentUser().getUid()); // collecting current user UID
             newUser.setUserName(edText); // collecting name from textbox
             newUser.setUserContactNum(auth.getCurrentUser().getPhoneNumber()); // current user mobile number
@@ -95,10 +95,10 @@ public class Login extends AppCompatActivity {
     }
 
     // if there is new user then register in database
-    private void registerNewUser(UserModel user){
+    private void registerNewUser(UsersModel user){
         DatabaseReference root = db.getReference("tblUser");
 
-        UserModel newUser = new UserModel(user.getUserContactNum(),user.getUserName());
+        UsersModel newUser = new UsersModel(user.getUserContactNum(),user.getUserName());
         // adding new user in database
         root.child(user.userId).setValue(newUser).addOnSuccessListener(
                 // user registered successfully then redirect to the main activity
@@ -134,7 +134,7 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // if the code is correct and the task is successful
-                            UserModel user = new UserModel();
+                            UsersModel user = new UsersModel();
                             user.setUserId(task.getResult().getUser().getUid().toString());
                             user.setUserContactNum(task.getResult().getUser().getPhoneNumber().toString());
 

@@ -1,6 +1,6 @@
 package com.example.chatapp;
 
-public class UserModel {
+public class UsersModel {
     public String userId;
     public String userContactNum;
     public String userName;
@@ -14,14 +14,14 @@ public class UserModel {
         this.userProfilePic = userProfilePic;
     }
 
-    public UserModel(){}
-    public UserModel(String userId, String userContactNum, String userName) {
+    public UsersModel(){}
+    public UsersModel(String userId, String userContactNum, String userName) {
         this.userId = userId;
         this.userContactNum = userContactNum;
         this.userName = userName;
     }
 
-    public UserModel(String userContactNum, String userName) {
+    public UsersModel(String userContactNum, String userName) {
         this.userContactNum = userContactNum;
         this.userName = userName;
     }

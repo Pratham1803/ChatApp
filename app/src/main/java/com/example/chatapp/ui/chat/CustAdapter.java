@@ -8,13 +8,13 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapp.R;
-import com.example.chatapp.UserModel;
+import com.example.chatapp.UsersModel;
 
 import java.util.List;
 
 public class CustAdapter extends RecyclerView.Adapter<CustAdapter.ViewHolder> {
 
-    private List<UserModel> localDataSet;
+    private List<UsersModel> localDataSet;
 
     /**
      * Provide a reference to the type of views that you are using
@@ -41,7 +41,7 @@ public class CustAdapter extends RecyclerView.Adapter<CustAdapter.ViewHolder> {
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView
      */
-    public CustAdapter(List<UserModel> dataSet) {
+    public CustAdapter(List<UsersModel> dataSet) {
         localDataSet = dataSet;
     }
 

@@ -1,5 +1,6 @@
 package com.example.chatapp.ui.users;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,23 +40,15 @@ public class UsersFragment extends Fragment {
     private FragmentUsersBinding binding;
     RecyclerView recyclerViewUsers;
     CustomAdapter customAdapter;
-    List<UsersModel> users;
+    List<UsersModel> users = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        UsersViewModel notificationsViewModel =
-                new ViewModelProvider(this).get(UsersViewModel.class);
 
         binding = FragmentUsersBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        users= new ArrayList<>();
-        customAdapter = new CustomAdapter(users,UID);
-        recyclerViewUsers = root.findViewById(R.id.recyclerViewAllUsers);
-        recyclerViewUsers.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerViewUsers.setAdapter(customAdapter);
-
-        db.getReference("tblUser").addValueEventListener(
+        db.getReference("tblUser").addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -63,13 +56,9 @@ public class UsersFragment extends Fragment {
                         for(DataSnapshot post : snapshot.getChildren()) {
                             UsersModel newUser = post.getValue(UsersModel.class);
                             newUser.setUserId(post.getKey());
-                            Log.d("DataCollect", "onDataChange: "+post.getKey());
-                            Log.d("DataCollect", "onDataChange: Name = "+newUser.getUserName());
-                            Log.d("DataCollect", "onDataChange: Name = "+newUser.getUserProfilePic());
 
                             users.add(newUser);
                         }
-
                         customAdapter.notifyDataSetChanged();
                     }
                     @Override
@@ -78,6 +67,11 @@ public class UsersFragment extends Fragment {
                     }
                 }
         );
+        customAdapter = new CustomAdapter(users,UID,root.getContext(),db);
+        recyclerViewUsers = root.findViewById(R.id.recyclerViewAllUsers);
+        recyclerViewUsers.setLayoutManager(new LinearLayoutManager(root.getContext()));
+
+        recyclerViewUsers.setAdapter(customAdapter);
 
         return root;
     }

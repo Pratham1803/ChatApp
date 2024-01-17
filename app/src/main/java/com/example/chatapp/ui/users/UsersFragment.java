@@ -1,6 +1,5 @@
 package com.example.chatapp.ui.users;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,38 +8,28 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chatapp.Params;
+import com.example.chatapp.R;
 import com.example.chatapp.UserModel;
-import com.example.chatapp.UsersModel;
 import com.example.chatapp.databinding.FragmentUsersBinding;
-import  com.example.chatapp.R;
-import com.example.chatapp.ui.chat.CustAdapter;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class UsersFragment extends Fragment {
-
-    // Firebase
-    FirebaseAuth auth = FirebaseAuth.getInstance();
-    FirebaseDatabase db = FirebaseDatabase.getInstance();
-
-    // usefulvarriables
-    String UID = auth.getCurrentUser().getUid().toString();
-
+    private Params params;
     private FragmentUsersBinding binding;
-    RecyclerView recyclerViewUsers;
-    CustomAdapter customAdapter;
-    List<UsersModel> users = new ArrayList<>();
+    private RecyclerView recyclerViewUsers;
+    private CustomAdapter customAdapter;
+    private List<UserModel> lsUSer;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,34 +37,54 @@ public class UsersFragment extends Fragment {
         binding = FragmentUsersBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        db.getReference("tblUser").addListenerForSingleValueEvent(
+        this.params = new Params();
+        this.lsUSer = new ArrayList<>();
+        this.recyclerViewUsers = root.findViewById(R.id.recyclerViewAllUsers);
+        this.recyclerViewUsers.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        this.customAdapter = new CustomAdapter(this.lsUSer,getContext());
+        this.recyclerViewUsers.setAdapter(customAdapter);
+
+        params.getREFERENCE().addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                        for(DataSnapshot post : snapshot.getChildren()) {
-                            UsersModel newUser = post.getValue(UsersModel.class);
+                        for (DataSnapshot post : snapshot.getChildren()){
+                            if(post.getKey().equals(params.getCURRENT_USER()))
+                                continue;
+                            UserModel newUser = post.getValue(UserModel.class);
                             newUser.setUserId(post.getKey());
 
-                            users.add(newUser);
+                            DataSnapshot s = post.child(params.getFRIENDS());
+                            ArrayList<String> lsFriends = new ArrayList<>();
+                            if(s.exists()) {
+                                Log.d("UserRecord", "onDataChange: " + s.getChildren());
+                                for(DataSnapshot childSnap : s.getChildren())
+                                    lsFriends.add(childSnap.getValue().toString());
+                            }
+                            newUser.setFriends(lsFriends);
+
+                            ArrayList<String> lsRequests = new ArrayList<>();
+                            s = post.child(params.getREQUESTS());
+                            if(s.exists()) {
+                                Log.d("UserRecord", "onDataChange: " + s.getChildren());
+                                for(DataSnapshot childSnap : s.getChildren())
+                                    lsRequests.add(childSnap.getValue().toString());
+                            }
+                            newUser.setRequests(lsRequests);
+                            lsUSer.add(newUser);
                         }
                         customAdapter.notifyDataSetChanged();
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
                 }
         );
-        customAdapter = new CustomAdapter(users,UID,root.getContext(),db);
-        recyclerViewUsers = root.findViewById(R.id.recyclerViewAllUsers);
-        recyclerViewUsers.setLayoutManager(new LinearLayoutManager(root.getContext()));
-
-        recyclerViewUsers.setAdapter(customAdapter);
-
         return root;
     }
-
 
     @Override
     public void onDestroyView() {

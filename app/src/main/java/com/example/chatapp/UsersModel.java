@@ -15,11 +15,8 @@ public class UsersModel {
     }
 
     public UsersModel(){}
-    public UsersModel(String userId, String userContactNum, String userName) {
-        this.userId = userId;
-        this.userContactNum = userContactNum;
-        this.userName = userName;
-    }
+
+
 
     public UsersModel(String userContactNum, String userName) {
         this.userContactNum = userContactNum;

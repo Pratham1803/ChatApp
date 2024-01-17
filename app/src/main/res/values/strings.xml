@@ -12,5 +12,7 @@
     <string name="btnSubmit">Submit</string>
     <string name="btnVerifyOtp">Verify Otp</string>
     <string name="btnUpdate">Update Profile</string>
+    <string name="btnFriends">My Friends</string>
+    <string name="btnRequest">New Requests</string>
 
 </resources>

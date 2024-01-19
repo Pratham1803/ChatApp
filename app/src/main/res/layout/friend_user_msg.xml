@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="10sp"
+    android:padding="15sp"
+    android:layout_gravity="start"
+    app:cardCornerRadius="25sp">
+
+    <TextView
+        android:id="@+id/txtFrndName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Friend"
+        android:paddingLeft="20sp"
+        android:paddingRight="20sp"
+        android:textSize="18sp"
+        android:paddingBottom="20sp"
+        android:textStyle="bold"  />
+
+    <EditText
+        android:id="@+id/edFrndMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_margin="10sp"
+        android:paddingRight="20sp"
+        android:paddingLeft="20sp"
+        android:enabled="false"
+        android:textColor="@color/black"
+        android:inputType="textMultiLine"/>
+</androidx.cardview.widget.CardView>

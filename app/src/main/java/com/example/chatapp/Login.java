@@ -61,7 +61,7 @@ public class Login extends AppCompatActivity {
             }
             // if user entering Name
         } else if (edNum.getHint().toString().equals(getResources().getString(R.string.edUserNameHint))) {
-            UsersModel newUser = new UsersModel();
+            UserModel newUser = new UserModel();
             newUser.setUserId(auth.getCurrentUser().getUid()); // collecting current user UID
             newUser.setUserName(edText); // collecting name from textbox
             newUser.setUserContactNum(auth.getCurrentUser().getPhoneNumber()); // current user mobile number
@@ -95,12 +95,12 @@ public class Login extends AppCompatActivity {
     }
 
     // if there is new user then register in database
-    private void registerNewUser(UsersModel user){
+    private void registerNewUser(UserModel user){
         DatabaseReference root = db.getReference("tblUser");
 
-        UsersModel newUser = new UsersModel(user.getUserContactNum(),user.getUserName());
+        UserModel newUser = new UserModel(user.getUserContactNum(),user.getUserName(),"");
         // adding new user in database
-        root.child(user.userId).setValue(newUser).addOnSuccessListener(
+        root.child(user.getUserId()).setValue(newUser).addOnSuccessListener(
                 // user registered successfully then redirect to the main activity
                 new OnSuccessListener<Void>() {
                     @Override
@@ -134,7 +134,7 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // if the code is correct and the task is successful
-                            UsersModel user = new UsersModel();
+                            UserModel user = new UserModel();
                             user.setUserId(task.getResult().getUser().getUid().toString());
                             user.setUserContactNum(task.getResult().getUser().getPhoneNumber().toString());
 

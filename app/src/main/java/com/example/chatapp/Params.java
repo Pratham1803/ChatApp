@@ -6,6 +6,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Objects;
+
 public class Params {
     private final String  TABLE;
     private final String CURRENT_USER;
@@ -18,6 +20,7 @@ public class Params {
     private final DatabaseReference REFERENCE;
     private final StorageReference STORAGE;
     private final FirebaseAuth AUTH;
+    private final String CHAT;
 
     public Params(){
         this.TABLE = "tblUser";
@@ -31,6 +34,11 @@ public class Params {
         this.CURRENT_USER = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.STORAGE = FirebaseStorage.getInstance().getReference();
         this.AUTH = FirebaseAuth.getInstance();
+        this.CHAT = "Chat";
+    }
+
+    public String getCHAT() {
+        return CHAT;
     }
 
     public FirebaseAuth getAUTH() {

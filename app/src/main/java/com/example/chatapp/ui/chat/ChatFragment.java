@@ -76,6 +76,7 @@ public class ChatFragment extends Fragment {
                             Log.d("chatScreen", "addDetials: "+post.getKey());
                             if(listUsers.contains(post.getKey())){
                                 UserModel newUser = post.getValue(UserModel.class);
+                                newUser.setUserId(post.getKey());
                                 Log.d("chatScreen", "onDataChange: "+newUser.getUserName());
                                 lsUsers.add(newUser);
                             }

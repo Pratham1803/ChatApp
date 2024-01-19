@@ -174,6 +174,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 }
         );
 
+        params.getREFERENCE().child(params.getCURRENT_USER()).child(params.getCHAT()).child(frndUser).removeValue();
+        params.getREFERENCE().child(frndUser).child(params.getCHAT()).child(params.getCURRENT_USER()).removeValue();
+
         btn.setText("Removed");
         btn.setEnabled(false);
         Toast.makeText(context, "Friend Removed", Toast.LENGTH_SHORT).show();

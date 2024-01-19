@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Path;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,6 +56,7 @@ public class ProfileFragment extends Fragment {
     private UserModel CURRENT_USER = new UserModel();
      View root;
     private Uri imageUri;
+    private ScrollView scrollView;
     private ImageView imgProfile;
     private EditText edName,edNum;
     private ProgressBar progressBar;
@@ -137,10 +140,11 @@ public class ProfileFragment extends Fragment {
     public void btnFriends_Clicked(){
         Log.d("profile", "btnRequests_Clicked: "+CURRENT_USER.getRequests());
         lsUser.clear();
-        params.getREFERENCE().addListenerForSingleValueEvent(
+        params.getREFERENCE().addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        lsUser.clear();
                         for(DataSnapshot post : snapshot.getChildren()){
                             if(CURRENT_USER.getFriends().contains(post.getKey())){
                                 UserModel newUser = post.getValue(UserModel.class);
@@ -148,14 +152,11 @@ public class ProfileFragment extends Fragment {
                                 lsUser.add(newUser);
                             }
                         }
+                        profileAdapter.notifyItemInserted(lsUser.size()-1);
+                        recyclerView.scrollToPosition(lsUser.size()-1);
+                        scrollView.fullScroll(View.FOCUS_DOWN);
                         if (lsUser.isEmpty())
                             Toast.makeText(root.getContext(), "You have not any friends!!", Toast.LENGTH_SHORT).show();
-                        else {
-                            profileAdapter = new ProfileAdapter(lsUser, root.getContext(),params.getFRIENDS());
-
-                            recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
-                            recyclerView.setAdapter(profileAdapter);
-                        }
                     }
 
                     @Override
@@ -170,10 +171,11 @@ public class ProfileFragment extends Fragment {
     public void btnRequests_Clicked(){
         Log.d("profile", "btnRequests_Clicked: "+CURRENT_USER.getRequests());
         lsUser.clear();
-        params.getREFERENCE().addListenerForSingleValueEvent(
+        params.getREFERENCE().addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        lsUser.clear();
                         for(DataSnapshot post : snapshot.getChildren()){
                             if(CURRENT_USER.getRequests().contains(post.getKey())){
                                 UserModel newUser = post.getValue(UserModel.class);
@@ -181,14 +183,11 @@ public class ProfileFragment extends Fragment {
                                 lsUser.add(newUser);
                             }
                         }
+                        profileAdapter.notifyItemInserted(lsUser.size());
+                        recyclerView.scrollToPosition(lsUser.size()-1);
+                        scrollView.fullScroll(View.FOCUS_DOWN);
                         if (lsUser.isEmpty())
                             Toast.makeText(root.getContext(), "No new Requests", Toast.LENGTH_SHORT).show();
-                        else {
-                            profileAdapter = new ProfileAdapter(lsUser, root.getContext(), params.getREQUESTS());
-
-                            recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
-                            recyclerView.setAdapter(profileAdapter);
-                        }
                     }
 
                     @Override
@@ -265,10 +264,14 @@ public class ProfileFragment extends Fragment {
         btnLogOut = root.findViewById(R.id.btnLogOut);
         progressBar = root.findViewById(R.id.progressBar2);
         recyclerView = root.findViewById(R.id.recyclerViewRequests);
+        scrollView = root.findViewById(R.id.scrollView2);
         fillFields();
 
         // seting recycler view
         lsUser = new ArrayList<>();
+        profileAdapter = new ProfileAdapter(lsUser, root.getContext(),params.getFRIENDS());
+        recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
+        recyclerView.setAdapter(profileAdapter);
 
         // onclick listeners
         imgProfile.setOnClickListener(new View.OnClickListener() {

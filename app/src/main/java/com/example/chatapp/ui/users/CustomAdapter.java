@@ -2,6 +2,7 @@ package com.example.chatapp.ui.users;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,9 +16,11 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.Resource;
 import com.example.chatapp.Params;
 import com.example.chatapp.R;
 import com.example.chatapp.UserModel;
+import com.example.chatapp.UserType;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     public Params params = new Params();
     private List<UserModel> localDataSet;
     Context context;
+    UserType userType;
     List<String> preFriends = new ArrayList<>();
 
     /**
@@ -69,6 +73,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     public CustomAdapter(List<UserModel> dataSet, Context con) {
         localDataSet = dataSet;
         context = con;
+        userType = new UserType(context);
     }
 
     // Create new views (invoked by the layout manager)
@@ -92,25 +97,29 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             Glide.with(context).load(localDataSet.get(position).getUserProfilePic()).into(viewHolder.getImgUserProfile());
         }
 
-        String frndUser = localDataSet.get(position).getUserName();
-        if(localDataSet.get(position).getFriends().contains(params.getCURRENT_USER()))
-            changeButtonFriend(viewHolder.getBtnAddUser(),frndUser);
-        else if (localDataSet.get(position).getRequests().contains(params.getCURRENT_USER()))
-            changeButtonReuest(viewHolder.getBtnAddUser());
-        else
-            simpleBtn(viewHolder.getBtnAddUser(),localDataSet.get(position).getUserId());
+        String frndUser = localDataSet.get(position).getUserId();
+
+        if(localDataSet.get(position).getFriends().contains(params.getCURRENT_USER())) {
+            changeButtonFriend(viewHolder.getBtnAddUser(), frndUser);
+        }
+        else if (localDataSet.get(position).getRequests().contains(params.getCURRENT_USER())) {
+            changeButtonReuest(viewHolder.getBtnAddUser(), frndUser);
+        }
+        else {
+            simpleBtn(viewHolder.getBtnAddUser(), localDataSet.get(position).getUserId());
+        }
         Log.d("frndLIST", "User : "+localDataSet.get(position).getUserName()+" Requests = "+localDataSet.get(position).getRequests());
     }
 
-    void changeButtonReuest(Button btn){
+    void changeButtonReuest(Button btn,String UID){
         btn.setBackgroundColor(Color.GRAY);
         btn.setText("Request Sent");
         btn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        // Toast.makeText(context, "Request Already Sent", Toast.LENGTH_SHORT).show();
+                        userType.rejectRequest(btn,UID);
+                        simpleBtn(btn,UID);
                     }
                 }
         );
@@ -119,18 +128,18 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         btn.setBackgroundColor(Color.GREEN);
         btn.setTextColor(Color.WHITE);
         btn.setText("Friend");
-
         btn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(context, "Already Friend "+name, Toast.LENGTH_SHORT).show();
+                        userType.removeFrnd(btn,name);
                     }
                 }
         );
     }
 
     void simpleBtn(Button btn,String frndUser){
+        btn.setText("Add Friend");
         btn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -140,7 +149,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Toast.makeText(context, "Request Sent!", Toast.LENGTH_SHORT).show();
-                                        changeButtonReuest(btn);
+                                        changeButtonReuest(btn,frndUser);
                                     }
                                 }
                         );

@@ -19,6 +19,10 @@ public class UserModel {
         this.userName = userName;
         this.userProfilePic = userProfilePic;
     }
+    public UserModel(String userContactNum, String userName) {
+        this.userContactNum = userContactNum;
+        this.userName = userName;
+    }
 
     public UserModel(String userId, String userContactNum, String userName, String userProfilePic, ArrayList<String> friends) {
         this.userId = userId;

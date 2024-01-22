@@ -11,10 +11,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.chatapp.MainActivity;
 import com.example.chatapp.Params;
 import com.example.chatapp.R;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class Chat extends AppCompatActivity {
+public class Message extends AppCompatActivity {
     private Params params;
     private String FRIEND_USER_ID;
     private ImageView imgFrndUser;
@@ -39,15 +40,19 @@ public class Chat extends AppCompatActivity {
 
     public void btnSend_Clicked(View v){
         String Msg = edMsgBox.getText().toString();
-        ChatModel chatModel = new ChatModel();
-        chatModel.setCHAT(Msg);
-        chatModel.setUSER_ID(params.getCURRENT_USER());
 
-        CURRENT_USER_REF.push().setValue(chatModel);
+        if(!Msg.isEmpty()) {
+            ChatModel chatModel = new ChatModel();
+            chatModel.setCHAT(Msg);
+            chatModel.setUSER_ID(params.getCURRENT_USER());
 
-        FRIEND_USER_REF.push().setValue(chatModel);
-        chatAdapter.notifyDataSetChanged();
-        edMsgBox.setText("");
+            CURRENT_USER_REF.push().setValue(chatModel);
+
+            FRIEND_USER_REF.push().setValue(chatModel);
+            chatAdapter.notifyDataSetChanged();
+            edMsgBox.setText("");
+        }else
+            Toast.makeText(this, "Enter the Message!!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -76,7 +81,7 @@ public class Chat extends AppCompatActivity {
         Log.d("chat", "onCreate: "+FRIEND_USER_ID);
         // adapter and recycler view settings
         arrChat = new ArrayList<>();
-        chatAdapter = new MsgAdapter(arrChat,this);
+        chatAdapter = new MsgAdapter(arrChat,this,txtFrndName.getText().toString());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -89,14 +94,20 @@ public class Chat extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         arrChat.clear();
-                        for(DataSnapshot post : snapshot.getChildren()){
-                            ChatModel chatModel = new ChatModel();
-                            chatModel.setCHAT(post.child("chat").getValue().toString());
-                            chatModel.setUSER_ID(post.child("user_ID").getValue().toString());
-                            arrChat.add(chatModel);
+                        try {
+                            for (DataSnapshot post : snapshot.getChildren()) {
+                                ChatModel chatModel = new ChatModel();
+                                chatModel.setCHAT(post.child("chat").getValue().toString());
+                                chatModel.setUSER_ID(post.child("user_ID").getValue().toString());
+                                arrChat.add(chatModel);
+                            }
+                            chatAdapter.notifyItemInserted(arrChat.size());
+                            recyclerViewChat.scrollToPosition(arrChat.size() - 1);
+                        }catch (Exception e){
+                            Log.d("MessageError", "onDataChange: "+e.toString());
+                            startActivity(new Intent(getBaseContext(),MainActivity.class));
+                            finish();
                         }
-                        chatAdapter.notifyItemInserted(arrChat.size());
-                        recyclerViewChat.scrollToPosition(arrChat.size()-1);
                     }
 
                     @Override

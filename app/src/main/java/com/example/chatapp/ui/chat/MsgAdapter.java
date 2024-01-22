@@ -21,6 +21,7 @@ import java.util.List;
 
 public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
     List<ChatModel> localDataSet;
+    final String FRND_USER_NAME;
     Context context;
     Params params;
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -50,11 +51,12 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
         }
     }
 
-    public MsgAdapter(List<ChatModel> dataSet, Context con){
+    public MsgAdapter(List<ChatModel> dataSet, Context con,String FRND_USER_NAME){
         Log.d("chatScreen", "ChatAdapter: "+dataSet);
         this.localDataSet = dataSet;
         this.context = con;
         this.params = new Params();
+        this.FRND_USER_NAME = FRND_USER_NAME;
     }
 
     @Override
@@ -94,6 +96,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
         if(localDataSet.get(position).getUSER_ID().equals(params.getCURRENT_USER())){
             holder.edUserMsg.setText(localDataSet.get(position).getCHAT());
         }else{
+            holder.getTxtFrndName().setText(FRND_USER_NAME);
             holder.edFrndMsg.setText(localDataSet.get(position).getCHAT());
         }
     }

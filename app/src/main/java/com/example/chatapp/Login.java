@@ -98,7 +98,7 @@ public class Login extends AppCompatActivity {
     private void registerNewUser(UserModel user){
         DatabaseReference root = db.getReference("tblUser");
 
-        UserModel newUser = new UserModel(user.getUserContactNum(),user.getUserName(),"");
+        UserModel newUser = new UserModel(user.getUserContactNum(),user.getUserName());
         // adding new user in database
         root.child(user.getUserId()).setValue(newUser).addOnSuccessListener(
                 // user registered successfully then redirect to the main activity

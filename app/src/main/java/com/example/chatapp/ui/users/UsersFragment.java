@@ -45,10 +45,11 @@ public class UsersFragment extends Fragment {
         this.customAdapter = new CustomAdapter(this.lsUSer,getContext());
         this.recyclerViewUsers.setAdapter(customAdapter);
 
-        params.getREFERENCE().addListenerForSingleValueEvent(
+        params.getREFERENCE().addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        lsUSer.clear();
                         for (DataSnapshot post : snapshot.getChildren()){
                             if(post.getKey().equals(params.getCURRENT_USER()))
                                 continue;

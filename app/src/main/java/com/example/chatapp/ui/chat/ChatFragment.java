@@ -49,16 +49,21 @@ public class ChatFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
         recyclerView.setAdapter(chatAdapter);
 
-        params.getREFERENCE().child(params.getCURRENT_USER()).child(params.getFRIENDS()).get().addOnSuccessListener(
-                new OnSuccessListener<DataSnapshot>() {
+        params.getREFERENCE().child(params.getCURRENT_USER()).child(params.getFRIENDS()).addListenerForSingleValueEvent(
+                new ValueEventListener() {
                     @Override
-                    public void onSuccess(DataSnapshot dataSnapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                         List<String> list = new ArrayList<>();
-                        for(DataSnapshot post : dataSnapshot.getChildren()){
+                        for(DataSnapshot post : snapshot.getChildren()){
                             UserModel user = new UserModel();
                             list.add(post.getValue().toString());
                         }
                         addDetials(list);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
                 }
         );

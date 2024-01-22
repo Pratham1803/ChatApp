@@ -1,33 +1,23 @@
 package com.example.chatapp.ui.chat;
-import android.net.Uri;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapp.Params;
 import com.example.chatapp.R;
 import com.example.chatapp.UserModel;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
 
-import java.net.URI;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
@@ -76,7 +66,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ChatAdapter.ViewHolder holder, int position) {
         holder.getTxtUserName().setText(localDataSet.get(position).getUserName());
-        Glide.with(context).load(localDataSet.get(position).getUserProfilePic()).into(holder.imgProfilePic);
+
+        if(localDataSet.get(position).getUserProfilePic()!=null)
+            Glide.with(context).load(localDataSet.get(position).getUserProfilePic()).into(holder.getImgProfilePic());
 
         holder.itemView.setOnClickListener(
                 new View.OnClickListener() {
@@ -88,7 +80,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
                         bundle.putString("frndPic",localDataSet.get(position).getUserProfilePic());
 
                         Log.d("chat", "onCreate: "+localDataSet.get(position).getUserId());
-                        Intent intent = new Intent(context,Chat.class);
+                        Intent intent = new Intent(context, Message.class);
                         intent.putExtra("userData",bundle);
                         context.startActivity(intent);
                     }

@@ -1,5 +1,7 @@
 package com.example.chatapp.ui.chat;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Path;
 import android.util.LayoutDirection;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chatapp.MainActivity;
 import com.example.chatapp.Params;
 import com.example.chatapp.R;
 
@@ -93,11 +96,17 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull MsgAdapter.ViewHolder holder, int position) {
-        if(localDataSet.get(position).getUSER_ID().equals(params.getCURRENT_USER())){
-            holder.edUserMsg.setText(localDataSet.get(position).getCHAT());
-        }else{
-            holder.getTxtFrndName().setText(FRND_USER_NAME);
-            holder.edFrndMsg.setText(localDataSet.get(position).getCHAT());
+        try {
+            if (localDataSet.get(position).getUSER_ID().equals(params.getCURRENT_USER())) {
+                holder.edUserMsg.setText(localDataSet.get(position).getCHAT());
+            } else {
+                holder.getTxtFrndName().setText(FRND_USER_NAME);
+                holder.edFrndMsg.setText(localDataSet.get(position).getCHAT());
+            }
+        }catch (IndexOutOfBoundsException ie){
+            Log.d("Chat Error", "onBindViewHolder: "+ie.toString());
+
+            context.startActivity(new Intent(context, MainActivity.class));
         }
     }
 

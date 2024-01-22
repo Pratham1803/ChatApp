@@ -240,7 +240,7 @@ public class ProfileFragment extends Fragment {
 
                         Log.d("ProfileError", "onSuccess: "+user.getUserProfilePic());
                         if(user.getUserProfilePic() != null) {
-                            Glide.with(getContext()).load(user.getUserProfilePic()).into(imgProfile);
+                            Glide.with(root.getContext()).load(user.getUserProfilePic()).into(imgProfile);
                             ImageName = params.getSTORAGE().child(user.getUserProfilePic()).getName();
                             ImageName = ImageName.substring(0, ImageName.indexOf("?"));
                         }

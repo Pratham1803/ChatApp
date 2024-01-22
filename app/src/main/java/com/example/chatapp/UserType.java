@@ -57,13 +57,13 @@ public class UserType {
                         for(DataSnapshot post : dataSnapshot.getChildren()){
                             if(post.getValue().toString().equals(params.getCURRENT_USER())){
                                 params.getREFERENCE().child(frndUser).child(params.getREQUESTS()).child(post.getKey()).removeValue();
+                                Toast.makeText(context, "New Friend Added", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
                 }
         );
         btn.setEnabled(false);
-        Toast.makeText(context, "New Friend Added", Toast.LENGTH_SHORT).show();
     }
 
     // request cancel
@@ -103,6 +103,7 @@ public class UserType {
                         for(DataSnapshot post : dataSnapshot.getChildren()){
                             if(post.getValue().toString().equals(params.getCURRENT_USER())){
                                 params.getREFERENCE().child(frndUser).child(params.getFRIENDS()).child(post.getKey()).removeValue();
+                                Toast.makeText(context, "Friend Removed", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -114,6 +115,5 @@ public class UserType {
 
         btn.setText("Removed");
         btn.setEnabled(false);
-        Toast.makeText(context, "Friend Removed", Toast.LENGTH_SHORT).show();
     }
 }

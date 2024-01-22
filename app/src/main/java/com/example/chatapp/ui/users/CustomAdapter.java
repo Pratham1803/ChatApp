@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -119,7 +120,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                     @Override
                     public void onClick(View v) {
                         userType.rejectRequest(btn,UID);
-                        simpleBtn(btn,UID);
                     }
                 }
         );
@@ -133,6 +133,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                     @Override
                     public void onClick(View v) {
                         userType.removeFrnd(btn,name);
+                        simpleBtn(btn,name);
+                        btn.setBackgroundColor(context.getResources().getColor(R.color.purple_500));
                     }
                 }
         );

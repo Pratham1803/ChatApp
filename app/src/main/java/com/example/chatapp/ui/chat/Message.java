@@ -94,20 +94,15 @@ public class Message extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         arrChat.clear();
-                        try {
                             for (DataSnapshot post : snapshot.getChildren()) {
                                 ChatModel chatModel = new ChatModel();
                                 chatModel.setCHAT(post.child("chat").getValue().toString());
                                 chatModel.setUSER_ID(post.child("user_ID").getValue().toString());
                                 arrChat.add(chatModel);
                             }
+
                             chatAdapter.notifyItemInserted(arrChat.size());
                             recyclerViewChat.scrollToPosition(arrChat.size() - 1);
-                        }catch (Exception e){
-                            Log.d("MessageError", "onDataChange: "+e.toString());
-                            startActivity(new Intent(getBaseContext(),MainActivity.class));
-                            finish();
-                        }
                     }
 
                     @Override

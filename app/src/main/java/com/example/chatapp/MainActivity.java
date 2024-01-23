@@ -43,7 +43,10 @@ public class MainActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             // user id, name and number set
                             UserModel user = dataSnapshot.getValue(UserModel.class);
-                            user.setFCM_USER_TOKEN(dataSnapshot.child(Params.getFcmToken()).getValue().toString());
+
+                            if(dataSnapshot.child(Params.getFcmToken()).exists())
+                                user.setFCM_USER_TOKEN(dataSnapshot.child(Params.getFcmToken()).getValue().toString());
+
                             user.setUserId(dataSnapshot.getKey());
 
                             // users friend list

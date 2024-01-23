@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -68,6 +69,7 @@ public class ProfileFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProfileAdapter profileAdapter;
     private List<UserModel> lsUser;
+    private TextView txtUsersHead;
     private @NonNull FragmentProfileBinding binding;
 
     // Update button clicked
@@ -154,14 +156,19 @@ public class ProfileFragment extends Fragment {
                                 lsUser.add(newUser);
                             }
                         }
+                        if (lsUser.isEmpty()) {
+                            txtUsersHead.setText("There is Not any Friends");
+                            txtUsersHead.setVisibility(View.VISIBLE);
+                            scrollView.fullScroll(View.FOCUS_DOWN);
+                        }else
+                            txtUsersHead.setVisibility(View.INVISIBLE);
+
                         profileAdapter = new ProfileAdapter(lsUser, root.getContext(),params.getFRIENDS());
                         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
                         recyclerView.setAdapter(profileAdapter);
 
-                        recyclerView.scrollToPosition(lsUser.size()-1);
                         scrollView.fullScroll(View.FOCUS_DOWN);
-                        if (lsUser.isEmpty())
-                            Toast.makeText(root.getContext(), "You have not any friends!!", Toast.LENGTH_SHORT).show();
+                        recyclerView.scrollToPosition(lsUser.size()+1);
                     }
 
                     @Override
@@ -188,14 +195,20 @@ public class ProfileFragment extends Fragment {
                                 lsUser.add(newUser);
                             }
                         }
+
+                        if (lsUser.isEmpty()) {
+                            txtUsersHead.setText("No new Requests!!");
+                            scrollView.fullScroll(View.FOCUS_DOWN);
+                            txtUsersHead.setVisibility(View.VISIBLE);
+                        }else
+                            txtUsersHead.setVisibility(View.INVISIBLE);
+
                         profileAdapter = new ProfileAdapter(lsUser, root.getContext(),params.getREQUESTS());
                         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
                         recyclerView.setAdapter(profileAdapter);
 
-                        recyclerView.scrollToPosition(lsUser.size()-1);
                         scrollView.fullScroll(View.FOCUS_DOWN);
-                        if (lsUser.isEmpty())
-                            Toast.makeText(root.getContext(), "No new Requests", Toast.LENGTH_SHORT).show();
+                        recyclerView.scrollToPosition(lsUser.size()+1);
                     }
 
                     @Override
@@ -240,9 +253,11 @@ public class ProfileFragment extends Fragment {
 
                         Log.d("ProfileError", "onSuccess: "+user.getUserProfilePic());
                         if(user.getUserProfilePic() != null) {
-                            Glide.with(root.getContext()).load(user.getUserProfilePic()).into(imgProfile);
-                            ImageName = params.getSTORAGE().child(user.getUserProfilePic()).getName();
-                            ImageName = ImageName.substring(0, ImageName.indexOf("?"));
+                            try {
+                                Glide.with(root.getContext()).load(user.getUserProfilePic()).into(imgProfile);
+                                ImageName = params.getSTORAGE().child(user.getUserProfilePic()).getName();
+                                ImageName = ImageName.substring(0, ImageName.indexOf("?"));
+                            }catch  (Exception ignored){}
                         }
                         CURRENT_USER.setUserId(user.getUserId());
                         CURRENT_USER.setUserName(user.getUserName());
@@ -278,6 +293,7 @@ public class ProfileFragment extends Fragment {
         progressBar = root.findViewById(R.id.progressBar2);
         recyclerView = root.findViewById(R.id.recyclerViewRequests);
         scrollView = root.findViewById(R.id.scrollView2);
+        txtUsersHead = root.findViewById(R.id.txtUsersHead);
         fillFields();
 
         // seting recycler view

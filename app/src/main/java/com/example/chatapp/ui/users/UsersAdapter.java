@@ -2,9 +2,7 @@ package com.example.chatapp.ui.users;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +15,6 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
 import com.example.chatapp.Params;
 import com.example.chatapp.R;
 import com.example.chatapp.UserModel;
@@ -27,7 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
+public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     public Params params = new Params();
     private List<UserModel> localDataSet;
     Context context;
@@ -71,7 +68,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
      * @param dataSet String[] containing the data to populate views to be used
      *                by RecyclerView
      */
-    public CustomAdapter(List<UserModel> dataSet, Context con) {
+    public UsersAdapter(List<UserModel> dataSet, Context con) {
         localDataSet = dataSet;
         context = con;
         userType = new UserType(context);
@@ -79,17 +76,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     // Create new views (invoked by the layout manager)
     @Override
-    public CustomAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public UsersAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.all_users, viewGroup, false);
 
-        return new CustomAdapter.ViewHolder(view);
+        return new UsersAdapter.ViewHolder(view);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(CustomAdapter.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(UsersAdapter.ViewHolder viewHolder, @SuppressLint("RecyclerView") final int position) {
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
@@ -101,18 +98,18 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         String frndUser = localDataSet.get(position).getUserId();
 
         if(localDataSet.get(position).getFriends().contains(params.getCURRENT_USER())) {
-            changeButtonFriend(viewHolder.getBtnAddUser(), frndUser);
+            changeButtonFriend(viewHolder.getBtnAddUser(), frndUser,position);
         }
         else if (localDataSet.get(position).getRequests().contains(params.getCURRENT_USER())) {
-            changeButtonReuest(viewHolder.getBtnAddUser(), frndUser);
+            changeButtonReuest(viewHolder.getBtnAddUser(), frndUser,position);
         }
         else {
-            simpleBtn(viewHolder.getBtnAddUser(), localDataSet.get(position).getUserId());
+            simpleBtn(viewHolder.getBtnAddUser(), localDataSet.get(position).getUserId(),position);
         }
         Log.d("frndLIST", "User : "+localDataSet.get(position).getUserName()+" Requests = "+localDataSet.get(position).getRequests());
     }
 
-    void changeButtonReuest(Button btn,String UID){
+    void changeButtonReuest(Button btn,String UID,int pos){
         btn.setBackgroundColor(Color.GRAY);
         btn.setText("Request Sent");
         btn.setOnClickListener(
@@ -120,11 +117,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                     @Override
                     public void onClick(View v) {
                         userType.rejectRequest(btn,UID);
+                        simpleBtn(btn,UID,pos);
                     }
                 }
         );
     }
-    void changeButtonFriend(Button btn,String name){
+    void changeButtonFriend(Button btn,String name,int pos){
         btn.setBackgroundColor(Color.GREEN);
         btn.setTextColor(Color.WHITE);
         btn.setText("Friend");
@@ -133,15 +131,15 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                     @Override
                     public void onClick(View v) {
                         userType.removeFrnd(btn,name);
-                        simpleBtn(btn,name);
-                        btn.setBackgroundColor(context.getResources().getColor(R.color.purple_500));
+                        simpleBtn(btn,name,pos);
                     }
                 }
         );
     }
 
-    void simpleBtn(Button btn,String frndUser){
+    void simpleBtn(Button btn,String frndUser,int pos){
         btn.setText("Add Friend");
+        btn.setBackgroundColor(context.getResources().getColor(R.color.purple_500));
         btn.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -151,7 +149,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Toast.makeText(context, "Request Sent!", Toast.LENGTH_SHORT).show();
-                                        changeButtonReuest(btn,frndUser);
+                                        changeButtonReuest(btn,frndUser,pos);
                                     }
                                 }
                         );

@@ -15,20 +15,18 @@ import com.example.chatapp.Params;
 import com.example.chatapp.R;
 import com.example.chatapp.UserModel;
 import com.example.chatapp.databinding.FragmentUsersBinding;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class UsersFragment extends Fragment {
     private Params params;
     private FragmentUsersBinding binding;
     private RecyclerView recyclerViewUsers;
-    private CustomAdapter customAdapter;
+    private UsersAdapter customAdapter;
     private List<UserModel> lsUSer;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -42,7 +40,7 @@ public class UsersFragment extends Fragment {
         this.recyclerViewUsers = root.findViewById(R.id.recyclerViewAllUsers);
         this.recyclerViewUsers.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        this.customAdapter = new CustomAdapter(this.lsUSer,getContext());
+        this.customAdapter = new UsersAdapter(this.lsUSer,getContext());
         this.recyclerViewUsers.setAdapter(customAdapter);
 
         params.getREFERENCE().addValueEventListener(
@@ -75,7 +73,7 @@ public class UsersFragment extends Fragment {
                             newUser.setRequests(lsRequests);
                             lsUSer.add(newUser);
                         }
-                        customAdapter.notifyDataSetChanged();
+                        customAdapter.notifyItemInserted(lsUSer.size());
                     }
 
                     @Override

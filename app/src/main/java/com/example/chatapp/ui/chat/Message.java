@@ -26,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class Message extends AppCompatActivity {
-    private Params params;
     private String FRIEND_USER_ID;
     private ImageView imgFrndUser;
     private TextView txtFrndName;
@@ -44,7 +43,7 @@ public class Message extends AppCompatActivity {
         if(!Msg.isEmpty()) {
             ChatModel chatModel = new ChatModel();
             chatModel.setCHAT(Msg);
-            chatModel.setUSER_ID(params.getCURRENT_USER());
+            chatModel.setUSER_ID(Params.getCURRENT_USER());
 
             CURRENT_USER_REF.push().setValue(chatModel);
 
@@ -61,7 +60,6 @@ public class Message extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         // initilization
-        this.params = new Params();
         this.imgFrndUser = findViewById(R.id.imgFrndUser);
         this.txtFrndName = findViewById(R.id.txtFrndUserName);
         this.recyclerViewChat = findViewById(R.id.recyclerViewChat);
@@ -75,8 +73,8 @@ public class Message extends AppCompatActivity {
         if(bundle.getString("frndPic")!=null)
             Glide.with(this).load(bundle.getString("frndPic")).into(this.imgFrndUser);
 
-        this.CURRENT_USER_REF = params.getREFERENCE().child(params.getCURRENT_USER()).child(params.getCHAT()).child(FRIEND_USER_ID);
-        this.FRIEND_USER_REF = params.getREFERENCE().child(FRIEND_USER_ID).child(params.getCHAT()).child(params.getCURRENT_USER());
+        this.CURRENT_USER_REF = Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getCHAT()).child(FRIEND_USER_ID);
+        this.FRIEND_USER_REF = Params.getREFERENCE().child(FRIEND_USER_ID).child(Params.getCHAT()).child(Params.getCURRENT_USER());
 
         Log.d("chat", "onCreate: "+FRIEND_USER_ID);
         // adapter and recycler view settings
@@ -111,5 +109,9 @@ public class Message extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    private void pushNotification(){
+
     }
 }

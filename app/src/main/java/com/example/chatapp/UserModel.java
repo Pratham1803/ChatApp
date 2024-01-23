@@ -1,8 +1,6 @@
 package com.example.chatapp;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.List;
 
 public class UserModel {
     private String userId;
@@ -11,28 +9,24 @@ public class UserModel {
     private String userProfilePic;
     private ArrayList<String> requests;
     private ArrayList<String> friends;
+    private String FCM_USER_TOKEN;
 
     public UserModel(){}
 
-    public UserModel(String userContactNum, String userName, String userProfilePic) {
-        this.userContactNum = userContactNum;
-        this.userName = userName;
-        this.userProfilePic = userProfilePic;
-    }
     public UserModel(String userContactNum, String userName) {
         this.userContactNum = userContactNum;
         this.userName = userName;
     }
-
-    public UserModel(String userId, String userContactNum, String userName, String userProfilePic, ArrayList<String> friends) {
-        this.userId = userId;
-        this.userContactNum = userContactNum;
-        this.userName = userName;
-        this.userProfilePic = userProfilePic;
-        this.friends = friends;
-    }
     public String getUserId() {
-        return userId;
+        return this.userId;
+    }
+
+    public String getFCM_USER_TOKEN() {
+        return FCM_USER_TOKEN;
+    }
+
+    public void setFCM_USER_TOKEN(String FCM_USER_TOKEN) {
+        this.FCM_USER_TOKEN = FCM_USER_TOKEN;
     }
 
     public void setUserId(String userId) {

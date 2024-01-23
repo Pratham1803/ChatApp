@@ -4,7 +4,6 @@ import static android.app.Activity.RESULT_OK;
 
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Path;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,19 +31,12 @@ import com.example.chatapp.Params;
 import com.example.chatapp.R;
 import com.example.chatapp.UserModel;
 import com.example.chatapp.databinding.FragmentProfileBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
@@ -53,8 +44,6 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
      // required variables
-    private Params params;
-    private UserModel CURRENT_USER = new UserModel();
      View root;
     private Uri imageUri;
     private ScrollView scrollView;
@@ -76,21 +65,21 @@ public class ProfileFragment extends Fragment {
     public void btnUpdate_Clicked() {
         if(imageUri != null) {
             String fileName = System.currentTimeMillis() + "." + getFileExtendion(imageUri);
-            params.getSTORAGE().child(fileName).putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            Params.getSTORAGE().child(fileName).putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    params.getSTORAGE().child(fileName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    Params.getSTORAGE().child(fileName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
                             if (ImageName != null)
-                                params.getSTORAGE().child(ImageName).delete();
+                                Params.getSTORAGE().child(ImageName).delete();
                             UserModel model = new UserModel();
                             model.setUserProfilePic(uri.toString());
                             model.setUserName(edName.getText().toString());
                             model.setUserContactNum(edNum.getText().toString());
 
-                            params.getREFERENCE().child(params.getCURRENT_USER()).child(params.getNAME()).setValue(model.getUserName());
-                            params.getREFERENCE().child(params.getCURRENT_USER()).child(params.getPROFILE_PIC()).setValue(model.getUserProfilePic());
+                            Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getNAME()).setValue(model.getUserName());
+                            Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getPROFILE_PIC()).setValue(model.getUserProfilePic());
 
                             progressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(getContext(), "Profile Updated", Toast.LENGTH_SHORT).show();
@@ -114,7 +103,7 @@ public class ProfileFragment extends Fragment {
             UserModel model = new UserModel();
             model.setUserName(edName.getText().toString());
 
-            params.getREFERENCE().child(params.getCURRENT_USER()).child(params.getNAME()).setValue(model.getUserName()).addOnSuccessListener(
+            Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getNAME()).setValue(model.getUserName()).addOnSuccessListener(
                     new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -123,7 +112,7 @@ public class ProfileFragment extends Fragment {
                     }
             );
         }
-        Log.d("profile", "onSuccess: User name = " + CURRENT_USER.getUserName());
+
     }
 
     // get the file type
@@ -142,15 +131,14 @@ public class ProfileFragment extends Fragment {
 
     // friends button clicked, show all requests
     public void btnFriends_Clicked(){
-        Log.d("profile", "btnRequests_Clicked: "+CURRENT_USER.getRequests());
         lsUser.clear();
-        params.getREFERENCE().addValueEventListener(
+        Params.getREFERENCE().addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         lsUser.clear();
                         for(DataSnapshot post : snapshot.getChildren()){
-                            if(CURRENT_USER.getFriends().contains(post.getKey())){
+                            if(Params.getCurrentUserModel().getFriends().contains(post.getKey())){
                                 UserModel newUser = post.getValue(UserModel.class);
                                 newUser.setUserId(post.getKey());
                                 lsUser.add(newUser);
@@ -163,12 +151,10 @@ public class ProfileFragment extends Fragment {
                         }else
                             txtUsersHead.setVisibility(View.INVISIBLE);
 
-                        profileAdapter = new ProfileAdapter(lsUser, root.getContext(),params.getFRIENDS());
-                        recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
-                        recyclerView.setAdapter(profileAdapter);
+                        profileAdapter.notifyDataSetChanged();
 
                         scrollView.fullScroll(View.FOCUS_DOWN);
-                        recyclerView.scrollToPosition(lsUser.size()+1);
+                        recyclerView.scrollToPosition(lsUser.size()+(lsUser.size()+1));
                     }
 
                     @Override
@@ -181,15 +167,14 @@ public class ProfileFragment extends Fragment {
 
     // requests button clicked, show all requests
     public void btnRequests_Clicked(){
-        Log.d("profile", "btnRequests_Clicked: "+CURRENT_USER.getRequests());
         lsUser.clear();
-        params.getREFERENCE().addValueEventListener(
+        Params.getREFERENCE().addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         lsUser.clear();
                         for(DataSnapshot post : snapshot.getChildren()){
-                            if(CURRENT_USER.getRequests().contains(post.getKey())){
+                            if(Params.getCurrentUserModel().getRequests().contains(post.getKey())){
                                 UserModel newUser = post.getValue(UserModel.class);
                                 newUser.setUserId(post.getKey());
                                 lsUser.add(newUser);
@@ -203,12 +188,10 @@ public class ProfileFragment extends Fragment {
                         }else
                             txtUsersHead.setVisibility(View.INVISIBLE);
 
-                        profileAdapter = new ProfileAdapter(lsUser, root.getContext(),params.getREQUESTS());
-                        recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
-                        recyclerView.setAdapter(profileAdapter);
+                        profileAdapter.notifyDataSetChanged();
 
                         scrollView.fullScroll(View.FOCUS_DOWN);
-                        recyclerView.scrollToPosition(lsUser.size()+1);
+                        recyclerView.scrollToPosition(lsUser.size()+(lsUser.size()+1));
                     }
 
                     @Override
@@ -221,63 +204,19 @@ public class ProfileFragment extends Fragment {
 
     // fill the details
     private void fillFields(){
-        Log.d("profile", "fillFields: drawable "+imgProfile.getDrawable());
-        progressBar.setVisibility(View.VISIBLE);
-        params.getREFERENCE().child(params.getCURRENT_USER()).addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        UserModel user = dataSnapshot.getValue(UserModel.class);
-
-                        edName.setText(user.getUserName());
-                        edNum.setText(user.getUserContactNum());
-
-                        DataSnapshot s = dataSnapshot.child(params.getFRIENDS());
-                        ArrayList<String> lsFriends = new ArrayList<>();
-                        if(s.exists()) {
-                            Log.d("UserRecord", "onDataChange: " + s.getChildren());
-                            for(DataSnapshot childSnap : s.getChildren())
-                                lsFriends.add(childSnap.getValue().toString());
-                        }
-                        user.setFriends(lsFriends);
-
-                        ArrayList<String> lsRequests = new ArrayList<>();
-                        s = dataSnapshot.child(params.getREQUESTS());
-                        if(s.exists()) {
-                            Log.d("UserRecord", "onDataChange: " + s.getChildren());
-                            for(DataSnapshot childSnap : s.getChildren())
-                                lsRequests.add(childSnap.getValue().toString());
-                        }
-                        user.setRequests(lsRequests);
-                        progressBar.setVisibility(View.INVISIBLE);
-
-                        Log.d("ProfileError", "onSuccess: "+user.getUserProfilePic());
-                        if(user.getUserProfilePic() != null) {
-                            try {
-                                Glide.with(root.getContext()).load(user.getUserProfilePic()).into(imgProfile);
-                                ImageName = params.getSTORAGE().child(user.getUserProfilePic()).getName();
-                                ImageName = ImageName.substring(0, ImageName.indexOf("?"));
-                            }catch  (Exception ignored){}
-                        }
-                        CURRENT_USER.setUserId(user.getUserId());
-                        CURRENT_USER.setUserName(user.getUserName());
-                        CURRENT_USER.setUserProfilePic(user.getUserProfilePic());
-                        CURRENT_USER.setFriends(user.getFriends());
-                        CURRENT_USER.setRequests(user.getRequests());
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                }
-        );
-        Log.d("profile", "fillFields: Requests = "+ CURRENT_USER.getUserName());
+        edNum.setText(Params.getCurrentUserModel().getUserContactNum());
+        edName.setText(Params.getCurrentUserModel().getUserName());
+        if(Params.getCurrentUserModel().getUserProfilePic() != null) {
+            try {
+                Glide.with(root.getContext()).load(Params.getCurrentUserModel().getUserProfilePic()).into(imgProfile);
+                ImageName = Params.getSTORAGE().child(Params.getCurrentUserModel().getUserProfilePic()).getName();
+                ImageName = ImageName.substring(0, ImageName.indexOf("?"));
+            }catch  (Exception ignored){}
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        this.params = new Params();
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         root = binding.getRoot();
@@ -298,6 +237,10 @@ public class ProfileFragment extends Fragment {
 
         // seting recycler view
         lsUser = new ArrayList<>();
+
+        profileAdapter = new ProfileAdapter(lsUser, root.getContext(), Params.getREQUESTS());
+        recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
+        recyclerView.setAdapter(profileAdapter);
 
         // onclick listeners
         imgProfile.setOnClickListener(new View.OnClickListener() {
@@ -328,7 +271,7 @@ public class ProfileFragment extends Fragment {
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                params.getAUTH().signOut();
+                Params.getAUTH().signOut();
                 Intent i = new Intent(root.getContext(), MainActivity.class);
                 startActivity(i);
                 getActivity().finish();

@@ -29,7 +29,6 @@ public class ChatFragment extends Fragment {
     private @NonNull FragmentChatBinding binding;
 
     // Data members
-    private Params params;
     RecyclerView recyclerView;
     List<UserModel> lsUsers;
     private ChatAdapter chatAdapter;
@@ -41,7 +40,6 @@ public class ChatFragment extends Fragment {
         this.root = binding.getRoot();
 
         // initilizing
-        this.params = new Params();
         this.recyclerView = root.findViewById(R.id.recyclerViewChat);
         this.lsUsers = new ArrayList<>();
 
@@ -49,37 +47,13 @@ public class ChatFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
         recyclerView.setAdapter(chatAdapter);
 
-        params.getREFERENCE().child(params.getCURRENT_USER()).child(params.getFRIENDS()).addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<String> list = new ArrayList<>();
-                        for(DataSnapshot post : snapshot.getChildren()){
-                            UserModel user = new UserModel();
-                            list.add(post.getValue().toString());
-                        }
-                        addDetials(list);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                }
-        );
-
-        return root;
-    }
-
-    private void addDetials(List<String> listUsers){
-        Log.d("chatScreen", "addDetials: "+listUsers);
-        params.getREFERENCE().addListenerForSingleValueEvent(
+        Params.getREFERENCE().addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for(DataSnapshot post : snapshot.getChildren()){
                             Log.d("chatScreen", "addDetials: "+post.getKey());
-                            if(listUsers.contains(post.getKey())){
+                            if(Params.getCurrentUserModel().getFriends().contains(post.getKey())){
                                 UserModel newUser = post.getValue(UserModel.class);
                                 newUser.setUserId(post.getKey());
                                 Log.d("chatScreen", "onDataChange: "+newUser.getUserName());
@@ -95,6 +69,8 @@ public class ChatFragment extends Fragment {
                     }
                 }
         );
+
+        return root;
     }
 
     @Override

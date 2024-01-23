@@ -6,83 +6,96 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Objects;
-
 public class Params {
-    private final String  TABLE;
-    private final String CURRENT_USER;
-    private final String  CONTACT_NUM;
-    private final String NAME;
-    private final String PROFILE_PIC;
-    private final String  REQUESTS;
-    private final String  FRIENDS;
-    private final FirebaseDatabase DATABASE;
-    private final DatabaseReference REFERENCE;
-    private final StorageReference STORAGE;
-    private final FirebaseAuth AUTH;
-    private final String CHAT;
+    private static String  TABLE;
+    private static UserModel CURRENT_USER_MODEL;
+    private static String CURRENT_USER;
+    private static String  CONTACT_NUM;
+    private static String NAME;
+    private static String PROFILE_PIC;
+    private static String  REQUESTS;
+    private static String  FRIENDS;
+    private static FirebaseDatabase DATABASE;
+    private static DatabaseReference REFERENCE;
+    private static StorageReference STORAGE;
+    private static FirebaseAuth AUTH;
+    private static String CHAT;
+    private static String FCM_TOKEN;
 
     public Params(){
-        this.TABLE = "tblUser";
-        this.CONTACT_NUM = "userContactNum";
-        this.NAME = "userName";
-        this.PROFILE_PIC = "userProfilePic";
-        this.FRIENDS = "friendList";
-        this.REQUESTS = "requestsList";
-        this.DATABASE = FirebaseDatabase.getInstance();
-        this.REFERENCE = DATABASE.getReference(this.TABLE);
-        this.CURRENT_USER = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        this.STORAGE = FirebaseStorage.getInstance().getReference();
-        this.AUTH = FirebaseAuth.getInstance();
-        this.CHAT = "Chat";
+        TABLE = "tblUser";
+        CONTACT_NUM = "userContactNum";
+        NAME = "userName";
+        PROFILE_PIC = "userProfilePic";
+        FRIENDS = "friendList";
+        REQUESTS = "requestsList";
+        DATABASE = FirebaseDatabase.getInstance();
+        REFERENCE = DATABASE.getReference(TABLE);
+        CURRENT_USER = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        STORAGE = FirebaseStorage.getInstance().getReference();
+        AUTH = FirebaseAuth.getInstance();
+        CHAT = "Chat";
+        FCM_TOKEN = "fcm_token";
     }
 
-    public String getCHAT() {
+    public static UserModel getCurrentUserModel() {
+        return CURRENT_USER_MODEL;
+    }
+
+    public static void setCurrentUserModel(UserModel currentUserModel) {
+        CURRENT_USER_MODEL = currentUserModel;
+    }
+
+    public static String getCHAT() {
         return CHAT;
     }
 
-    public FirebaseAuth getAUTH() {
+    public static FirebaseAuth getAUTH() {
         return AUTH;
     }
 
-    public StorageReference getSTORAGE() {
+    public static StorageReference getSTORAGE() {
         return STORAGE;
     }
 
-    public FirebaseDatabase getDATABASE() {
+    public static FirebaseDatabase getDATABASE() {
         return DATABASE;
     }
 
-    public DatabaseReference getREFERENCE() {
+    public static DatabaseReference getREFERENCE() {
         return REFERENCE;
     }
 
-    public String getCURRENT_USER() {
+    public static String getCURRENT_USER() {
         return CURRENT_USER;
     }
 
-    public String getTABLE() {
+    public static String getTABLE() {
         return TABLE;
     }
 
-    public String getCONTACT_NUM() {
+    public static String getCONTACT_NUM() {
         return CONTACT_NUM;
     }
 
-    public String getNAME() {
+    public static String getNAME() {
         return NAME;
     }
 
-    public String getPROFILE_PIC() {
+    public static String getPROFILE_PIC() {
         return PROFILE_PIC;
     }
 
-    public String getREQUESTS() {
+    public static String getREQUESTS() {
         return REQUESTS;
     }
 
-    public String getFRIENDS() {
+    public static String getFRIENDS() {
         return FRIENDS;
+    }
+
+    public static String getFcmToken() {
+        return FCM_TOKEN;
     }
 }
 

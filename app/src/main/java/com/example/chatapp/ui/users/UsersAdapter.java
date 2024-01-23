@@ -21,15 +21,12 @@ import com.example.chatapp.UserModel;
 import com.example.chatapp.UserType;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
-    public Params params = new Params();
-    private List<UserModel> localDataSet;
+    private final List<UserModel> localDataSet;
     Context context;
     UserType userType;
-    List<String> preFriends = new ArrayList<>();
 
     /**
      * Provide a reference to the type of views that you are using
@@ -97,10 +94,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
         String frndUser = localDataSet.get(position).getUserId();
 
-        if(localDataSet.get(position).getFriends().contains(params.getCURRENT_USER())) {
+        if(localDataSet.get(position).getFriends().contains(Params.getCURRENT_USER())) {
             changeButtonFriend(viewHolder.getBtnAddUser(), frndUser,position);
         }
-        else if (localDataSet.get(position).getRequests().contains(params.getCURRENT_USER())) {
+        else if (localDataSet.get(position).getRequests().contains(Params.getCURRENT_USER())) {
             changeButtonReuest(viewHolder.getBtnAddUser(), frndUser,position);
         }
         else {
@@ -144,7 +141,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        params.getREFERENCE().child(frndUser).child(params.getREQUESTS()).push().setValue(params.getCURRENT_USER()).addOnSuccessListener(
+                        Params.getREFERENCE().child(frndUser).child(Params.getREQUESTS()).push().setValue(Params.getCURRENT_USER()).addOnSuccessListener(
                                 new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {

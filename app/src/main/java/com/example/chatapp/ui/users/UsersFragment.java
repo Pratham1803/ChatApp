@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -35,7 +36,6 @@ public class UsersFragment extends Fragment {
         binding = FragmentUsersBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        this.params = new Params();
         this.lsUSer = new ArrayList<>();
         this.recyclerViewUsers = root.findViewById(R.id.recyclerViewAllUsers);
         this.recyclerViewUsers.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -43,18 +43,18 @@ public class UsersFragment extends Fragment {
         this.customAdapter = new UsersAdapter(this.lsUSer,getContext());
         this.recyclerViewUsers.setAdapter(customAdapter);
 
-        params.getREFERENCE().addValueEventListener(
+        Params.getREFERENCE().addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         lsUSer.clear();
                         for (DataSnapshot post : snapshot.getChildren()){
-                            if(post.getKey().equals(params.getCURRENT_USER()))
+                            if(post.getKey().equals(Params.getCURRENT_USER()))
                                 continue;
                             UserModel newUser = post.getValue(UserModel.class);
                             newUser.setUserId(post.getKey());
 
-                            DataSnapshot s = post.child(params.getFRIENDS());
+                            DataSnapshot s = post.child(Params.getFRIENDS());
                             ArrayList<String> lsFriends = new ArrayList<>();
                             if(s.exists()) {
                                 Log.d("UserRecord", "onDataChange: " + s.getChildren());
@@ -64,7 +64,7 @@ public class UsersFragment extends Fragment {
                             newUser.setFriends(lsFriends);
 
                             ArrayList<String> lsRequests = new ArrayList<>();
-                            s = post.child(params.getREQUESTS());
+                            s = post.child(Params.getREQUESTS());
                             if(s.exists()) {
                                 Log.d("UserRecord", "onDataChange: " + s.getChildren());
                                 for(DataSnapshot childSnap : s.getChildren())

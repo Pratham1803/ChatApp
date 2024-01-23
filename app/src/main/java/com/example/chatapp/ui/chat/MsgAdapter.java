@@ -36,7 +36,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
             super(view);
             // Define click listener for the ViewHolder's View
 
-            txtFrndName = (TextView) view.findViewById(R.id.txtFrndName);
+            txtFrndName = view.findViewById(R.id.txtFrndName);
             edFrndMsg = view.findViewById(R.id.edFrndMsg);
             edUserMsg = view.findViewById(R.id.edUserMsg);
         }
@@ -64,11 +64,11 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
 
     @Override
     public int getItemViewType(int position) {
-        Log.d("ChatAdapter", "getItemViewType: "+localDataSet.get(position).getUSER_ID().equals(params.getCURRENT_USER()));
+        Log.d("ChatAdapter", "getItemViewType: "+localDataSet.get(position).getUSER_ID().equals(Params.getCURRENT_USER()));
         Log.d("ChatAdapter", "getItemViewType: "+localDataSet.get(position).getUSER_ID());
-        Log.d("ChatAdapter", "getItemViewType: "+params.getCURRENT_USER());
+        Log.d("ChatAdapter", "getItemViewType: "+ Params.getCURRENT_USER());
 
-        if(localDataSet.get(position).getUSER_ID().equals(params.getCURRENT_USER()))
+        if(localDataSet.get(position).getUSER_ID().equals(Params.getCURRENT_USER()))
             return 0;
         else
             return 1;
@@ -97,14 +97,14 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull MsgAdapter.ViewHolder holder, int position) {
         try {
-            if (localDataSet.get(position).getUSER_ID().equals(params.getCURRENT_USER())) {
+            if (localDataSet.get(position).getUSER_ID().equals(Params.getCURRENT_USER())) {
                 holder.edUserMsg.setText(localDataSet.get(position).getCHAT());
             } else {
                 holder.getTxtFrndName().setText(FRND_USER_NAME);
                 holder.edFrndMsg.setText(localDataSet.get(position).getCHAT());
             }
         }catch (IndexOutOfBoundsException ie){
-            Log.d("Chat Error", "onBindViewHolder: "+ie.toString());
+            Log.d("Chat Error", "onBindViewHolder: "+ ie);
 
             context.startActivity(new Intent(context, MainActivity.class));
         }

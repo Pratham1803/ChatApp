@@ -27,7 +27,6 @@ import java.util.List;
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder>{
     List<UserModel> localDataSet;
     Context context;
-    Params params;
     final String CURRENT_BTN;
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
@@ -38,9 +37,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             super(view);
             // Define click listener for the ViewHolder's View
 
-            textView = (TextView) view.findViewById(R.id.txtUserListName);
-            imgUserProfile = (ImageView) view.findViewById(R.id.imgUserProfile);
-            btnAddUser = (Button) view.findViewById(R.id.btnAddUserInList);
+            textView = view.findViewById(R.id.txtUserListName);
+            imgUserProfile = view.findViewById(R.id.imgUserProfile);
+            btnAddUser = view.findViewById(R.id.btnAddUserInList);
         }
 
         public ImageView getImgUserProfile() {
@@ -60,7 +59,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         this.localDataSet = dataSet;
         this.context = con;
         this.CURRENT_BTN = CURRENT_BTN;
-        this.params = new Params();
     }
 
     @NonNull
@@ -83,7 +81,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
         String frndUser = localDataSet.get(position).getUserId();
         UserType userType = new UserType(context);
-        if(CURRENT_BTN.equals(params.getREQUESTS())) {
+        if(CURRENT_BTN.equals(Params.getREQUESTS())) {
             holder.getBtnAddUser().setText("Approve");
             holder.getBtnAddUser().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -94,7 +92,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                     //approveFriend(holder.getBtnAddUser(), frndUser);
                 }
             });
-        } else if (CURRENT_BTN.equals(params.getFRIENDS())) {
+        } else if (CURRENT_BTN.equals(Params.getFRIENDS())) {
             holder.getBtnAddUser().setText("Remove");
             holder.getBtnAddUser().setOnClickListener(new View.OnClickListener() {
                 @Override

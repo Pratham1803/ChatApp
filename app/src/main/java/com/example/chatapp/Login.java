@@ -34,6 +34,7 @@ public class Login extends AppCompatActivity {
 
     // Firebase variiables
     FirebaseAuth auth = FirebaseAuth.getInstance();
+
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     String verificationId;
 

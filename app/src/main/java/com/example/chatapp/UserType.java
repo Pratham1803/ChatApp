@@ -15,11 +15,11 @@ public class UserType {
         this.context = context;
     }
     public void approveFriend(Button btn, String frndUID){
-        Params.getREFERENCE().child(frndUID).child(Params.getFRIENDS()).push().setValue(Params.getCURRENT_USER()).addOnSuccessListener(
+        Params.getREFERENCE().child(frndUID).child(Params.getFRIENDS()).push().setValue(Params.getCurrentUserModel().getUserId()).addOnSuccessListener(
                 new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getFRIENDS()).push().setValue(frndUID).addOnSuccessListener(
+                        Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getFRIENDS()).push().setValue(frndUID).addOnSuccessListener(
                                 new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
@@ -37,13 +37,13 @@ public class UserType {
         btn.setBackgroundColor(Color.GREEN);
         btn.setText("Added");
 
-        Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getREQUESTS()).get().addOnSuccessListener(
+        Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getREQUESTS()).get().addOnSuccessListener(
                 new OnSuccessListener<DataSnapshot>() {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
                         for(DataSnapshot post : dataSnapshot.getChildren()){
                             if(post.getValue().toString().equals(frndUser)){
-                                Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getREQUESTS()).child(post.getKey()).removeValue();
+                                Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getREQUESTS()).child(post.getKey()).removeValue();
                             }
                         }
                     }
@@ -54,7 +54,7 @@ public class UserType {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
                         for(DataSnapshot post : dataSnapshot.getChildren()){
-                            if(post.getValue().toString().equals(Params.getCURRENT_USER())){
+                            if(post.getValue().toString().equals(Params.getCurrentUserModel().getUserId())){
                                 Params.getREFERENCE().child(frndUser).child(Params.getREQUESTS()).child(post.getKey()).removeValue();
                                 Toast.makeText(context, "New Friend Added", Toast.LENGTH_SHORT).show();
                             }
@@ -72,7 +72,7 @@ public class UserType {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
                         for(DataSnapshot post: dataSnapshot.getChildren()) {
-                            if (post.getValue().toString().equals(Params.getCURRENT_USER()))
+                            if (post.getValue().toString().equals(Params.getCurrentUserModel().getUserId()))
                                 Params.getREFERENCE().child(FrndUID).child(Params.getREQUESTS()).child(post.getKey()).removeValue();
                         }
                     }
@@ -83,13 +83,13 @@ public class UserType {
     // remove friend
     public void removeFrnd(Button btn,String frndUser){
         btn.setBackgroundColor(Color.GRAY);
-        Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getFRIENDS()).get().addOnSuccessListener(
+        Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getFRIENDS()).get().addOnSuccessListener(
                 new OnSuccessListener<DataSnapshot>() {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
                         for(DataSnapshot post : dataSnapshot.getChildren()){
                             if(post.getValue().toString().equals(frndUser)){
-                                Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getFRIENDS()).child(post.getKey()).removeValue();
+                                Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getFRIENDS()).child(post.getKey()).removeValue();
                             }
                         }
                     }
@@ -100,7 +100,7 @@ public class UserType {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
                         for(DataSnapshot post : dataSnapshot.getChildren()){
-                            if(post.getValue().toString().equals(Params.getCURRENT_USER())){
+                            if(post.getValue().toString().equals(Params.getCurrentUserModel().getUserId())){
                                 Params.getREFERENCE().child(frndUser).child(Params.getFRIENDS()).child(post.getKey()).removeValue();
                                 Toast.makeText(context, "Friend Removed", Toast.LENGTH_SHORT).show();
                             }
@@ -109,8 +109,8 @@ public class UserType {
                 }
         );
 
-        Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getCHAT()).child(frndUser).removeValue();
-        Params.getREFERENCE().child(frndUser).child(Params.getCHAT()).child(Params.getCURRENT_USER()).removeValue();
+        Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getCHAT()).child(frndUser).removeValue();
+        Params.getREFERENCE().child(frndUser).child(Params.getCHAT()).child(Params.getCurrentUserModel().getUserId()).removeValue();
 
         btn.setText("Removed");
         btn.setEnabled(false);

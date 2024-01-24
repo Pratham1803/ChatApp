@@ -49,7 +49,7 @@ public class UsersFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         lsUSer.clear();
                         for (DataSnapshot post : snapshot.getChildren()){
-                            if(post.getKey().equals(Params.getCURRENT_USER()))
+                            if(post.getKey().equals(Params.getCurrentUserModel().getUserId()))
                                 continue;
                             UserModel newUser = post.getValue(UserModel.class);
                             newUser.setUserId(post.getKey());

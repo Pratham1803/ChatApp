@@ -64,11 +64,11 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
 
     @Override
     public int getItemViewType(int position) {
-        Log.d("ChatAdapter", "getItemViewType: "+localDataSet.get(position).getUSER_ID().equals(Params.getCURRENT_USER()));
+        Log.d("ChatAdapter", "getItemViewType: "+localDataSet.get(position).getUSER_ID().equals(Params.getCurrentUserModel().getUserId()));
         Log.d("ChatAdapter", "getItemViewType: "+localDataSet.get(position).getUSER_ID());
-        Log.d("ChatAdapter", "getItemViewType: "+ Params.getCURRENT_USER());
+        Log.d("ChatAdapter", "getItemViewType: "+ Params.getCurrentUserModel().getUserId());
 
-        if(localDataSet.get(position).getUSER_ID().equals(Params.getCURRENT_USER()))
+        if(localDataSet.get(position).getUSER_ID().equals(Params.getCurrentUserModel().getUserId()))
             return 0;
         else
             return 1;
@@ -97,7 +97,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull MsgAdapter.ViewHolder holder, int position) {
         try {
-            if (localDataSet.get(position).getUSER_ID().equals(Params.getCURRENT_USER())) {
+            if (localDataSet.get(position).getUSER_ID().equals(Params.getCurrentUserModel().getUserId())) {
                 holder.edUserMsg.setText(localDataSet.get(position).getCHAT());
             } else {
                 holder.getTxtFrndName().setText(FRND_USER_NAME);

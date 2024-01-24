@@ -18,15 +18,29 @@ import com.bumptech.glide.Glide;
 import com.example.chatapp.MainActivity;
 import com.example.chatapp.Params;
 import com.example.chatapp.R;
+import com.example.chatapp.UserModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttp;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class Message extends AppCompatActivity {
     private String FRIEND_USER_ID;
+    private String FRIEND_FCM_TOKEN;
     private ImageView imgFrndUser;
     private TextView txtFrndName;
     private RecyclerView recyclerViewChat;
@@ -43,13 +57,15 @@ public class Message extends AppCompatActivity {
         if(!Msg.isEmpty()) {
             ChatModel chatModel = new ChatModel();
             chatModel.setCHAT(Msg);
-            chatModel.setUSER_ID(Params.getCURRENT_USER());
+            chatModel.setUSER_ID(Params.getCurrentUserModel().getUserId());
 
             CURRENT_USER_REF.push().setValue(chatModel);
 
             FRIEND_USER_REF.push().setValue(chatModel);
             chatAdapter.notifyDataSetChanged();
             edMsgBox.setText("");
+
+            sendNotification(Msg);
         }else
             Toast.makeText(this, "Enter the Message!!", Toast.LENGTH_SHORT).show();
     }
@@ -69,12 +85,13 @@ public class Message extends AppCompatActivity {
         // get frnd details and fill fields
         Bundle bundle = getIntent().getBundleExtra("userData");
         this.FRIEND_USER_ID = bundle.getString("frndUID");
+        this.FRIEND_FCM_TOKEN = bundle.getString("fcmToken");
         txtFrndName.setText(bundle.getString("frndName"));
         if(bundle.getString("frndPic")!=null)
             Glide.with(this).load(bundle.getString("frndPic")).into(this.imgFrndUser);
 
-        this.CURRENT_USER_REF = Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getCHAT()).child(FRIEND_USER_ID);
-        this.FRIEND_USER_REF = Params.getREFERENCE().child(FRIEND_USER_ID).child(Params.getCHAT()).child(Params.getCURRENT_USER());
+        this.CURRENT_USER_REF = Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getCHAT()).child(FRIEND_USER_ID);
+        this.FRIEND_USER_REF = Params.getREFERENCE().child(FRIEND_USER_ID).child(Params.getCHAT()).child(Params.getCurrentUserModel().getUserId());
 
         Log.d("chat", "onCreate: "+FRIEND_USER_ID);
         // adapter and recycler view settings
@@ -111,7 +128,50 @@ public class Message extends AppCompatActivity {
         );
     }
 
-    private void pushNotification(){
+    private void sendNotification(String Msg){
+        try {
+            JSONObject jsonObject = new JSONObject();
 
+            JSONObject notificationObject = new JSONObject();
+            notificationObject.put("title", Params.getCurrentUserModel().getUserName());
+            notificationObject.put("body", Msg);
+            notificationObject.put("image", Params.getCurrentUserModel().getUserProfilePic());
+            notificationObject.put("myicon", "@drawable/ic_stat_name");
+
+            JSONObject dataObj = new JSONObject();
+            dataObj.put("userId",Params.getCurrentUserModel().getUserId());
+
+            jsonObject.put("notification",notificationObject);
+            jsonObject.put("data",dataObj);
+
+            jsonObject.put("to",FRIEND_FCM_TOKEN);
+            callApi(jsonObject);
+        }catch (Exception e){
+            Log.d("ErrorMsg", "sendNotification: "+e.toString());
+        }
+    }
+
+    private void callApi(JSONObject jsonObject){
+        MediaType JSON = MediaType.get("application/json");
+
+        OkHttpClient client = new OkHttpClient();
+        String url = "https://fcm.googleapis.com/fcm/send";
+        RequestBody body = RequestBody.create(jsonObject.toString(),JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .header("Authorization","Bearer AAAA48ezQus:APA91bFkoZM761TQ0ji6w5tyAU1-y5fHIF5beKMTo0eNoxa2Up0GSgjaqhByEZurX4tgTUaF0t9l_xAl07RqE2A6annIQId2UgrRQfPODodrABDZxRFVDn_29U-ZZbw3uxbffGhRfitI")
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d("ErrorMsg", "onFailure: Send Notification "+e.toString());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                Log.d("ErrorMsg", "onResponse: Send Notification = "+response.message());
+            }
+        });
     }
 }

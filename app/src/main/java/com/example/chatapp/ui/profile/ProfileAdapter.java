@@ -27,7 +27,12 @@ import java.util.List;
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder>{
     List<UserModel> localDataSet;
     Context context;
-    final String CURRENT_BTN;
+    private String CURRENT_BTN;
+
+    public void setCURRENT_BTN(String CURRENT_BTN) {
+        this.CURRENT_BTN = CURRENT_BTN;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
         private final ImageView imgUserProfile;
@@ -55,10 +60,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         }
     }
 
-    public ProfileAdapter(List<UserModel> dataSet, Context con,final String CURRENT_BTN){
+    public ProfileAdapter(List<UserModel> dataSet, Context con){
         this.localDataSet = dataSet;
         this.context = con;
-        this.CURRENT_BTN = CURRENT_BTN;
     }
 
     @NonNull

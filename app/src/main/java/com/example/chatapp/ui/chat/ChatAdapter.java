@@ -78,8 +78,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
                         bundle.putString("frndUID",localDataSet.get(position).getUserId());
                         bundle.putString("frndName",localDataSet.get(position).getUserName());
                         bundle.putString("frndPic",localDataSet.get(position).getUserProfilePic());
+                        bundle.putString("fcmToken",localDataSet.get(position).getFCM_USER_TOKEN());
 
-                        Log.d("chat", "onCreate: "+localDataSet.get(position).getUserId());
+                        Log.d("chat", "onCreate: FCM = "+localDataSet.get(position).getFCM_USER_TOKEN());
                         Intent intent = new Intent(context, Message.class);
                         intent.putExtra("userData",bundle);
                         context.startActivity(intent);

@@ -94,10 +94,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
         String frndUser = localDataSet.get(position).getUserId();
 
-        if(localDataSet.get(position).getFriends().contains(Params.getCURRENT_USER())) {
+        if(localDataSet.get(position).getFriends().contains(Params.getCurrentUserModel().getUserId())) {
             changeButtonFriend(viewHolder.getBtnAddUser(), frndUser,position);
         }
-        else if (localDataSet.get(position).getRequests().contains(Params.getCURRENT_USER())) {
+        else if (localDataSet.get(position).getRequests().contains(Params.getCurrentUserModel().getUserId())) {
             changeButtonReuest(viewHolder.getBtnAddUser(), frndUser,position);
         }
         else {
@@ -141,7 +141,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Params.getREFERENCE().child(frndUser).child(Params.getREQUESTS()).push().setValue(Params.getCURRENT_USER()).addOnSuccessListener(
+                        Params.getREFERENCE().child(frndUser).child(Params.getREQUESTS()).push().setValue(Params.getCurrentUserModel().getUserId()).addOnSuccessListener(
                                 new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {

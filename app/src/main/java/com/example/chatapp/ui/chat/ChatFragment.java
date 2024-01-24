@@ -54,10 +54,18 @@ public class ChatFragment extends Fragment {
                         for(DataSnapshot post : snapshot.getChildren()){
                             Log.d("chatScreen", "addDetials: "+post.getKey());
                             if(Params.getCurrentUserModel().getFriends().contains(post.getKey())){
-                                UserModel newUser = post.getValue(UserModel.class);
-                                newUser.setUserId(post.getKey());
-                                Log.d("chatScreen", "onDataChange: "+newUser.getUserName());
-                                lsUsers.add(newUser);
+                                try {
+                                    UserModel newUser = post.getValue(UserModel.class);
+                                    newUser.setUserId(post.getKey());
+
+                                    if(post.child(Params.getFcmToken()).exists())
+                                        newUser.setFCM_USER_TOKEN(post.child(Params.getFcmToken()).getValue().toString());
+
+                                    Log.d("chatScreen", "FCM: " + newUser.getFCM_USER_TOKEN());
+                                    lsUsers.add(newUser);
+                                }catch (Exception e){
+                                    Log.d("ErrorMsg", "onDataChange: "+e.toString());
+                                }
                             }
                         }
                         chatAdapter.notifyDataSetChanged();

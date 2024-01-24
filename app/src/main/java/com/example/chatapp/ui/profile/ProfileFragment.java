@@ -78,8 +78,8 @@ public class ProfileFragment extends Fragment {
                             model.setUserName(edName.getText().toString());
                             model.setUserContactNum(edNum.getText().toString());
 
-                            Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getNAME()).setValue(model.getUserName());
-                            Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getPROFILE_PIC()).setValue(model.getUserProfilePic());
+                            Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getNAME()).setValue(model.getUserName());
+                            Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getPROFILE_PIC()).setValue(model.getUserProfilePic());
 
                             progressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(getContext(), "Profile Updated", Toast.LENGTH_SHORT).show();
@@ -103,7 +103,7 @@ public class ProfileFragment extends Fragment {
             UserModel model = new UserModel();
             model.setUserName(edName.getText().toString());
 
-            Params.getREFERENCE().child(Params.getCURRENT_USER()).child(Params.getNAME()).setValue(model.getUserName()).addOnSuccessListener(
+            Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getNAME()).setValue(model.getUserName()).addOnSuccessListener(
                     new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -152,6 +152,7 @@ public class ProfileFragment extends Fragment {
                             txtUsersHead.setVisibility(View.INVISIBLE);
 
                         profileAdapter.notifyDataSetChanged();
+                        profileAdapter.setCURRENT_BTN(Params.getFRIENDS());
 
                         scrollView.fullScroll(View.FOCUS_DOWN);
                         recyclerView.scrollToPosition(lsUser.size()+(lsUser.size()+1));
@@ -189,6 +190,7 @@ public class ProfileFragment extends Fragment {
                             txtUsersHead.setVisibility(View.INVISIBLE);
 
                         profileAdapter.notifyDataSetChanged();
+                        profileAdapter.setCURRENT_BTN(Params.getREQUESTS());
 
                         scrollView.fullScroll(View.FOCUS_DOWN);
                         recyclerView.scrollToPosition(lsUser.size()+(lsUser.size()+1));
@@ -233,12 +235,18 @@ public class ProfileFragment extends Fragment {
         recyclerView = root.findViewById(R.id.recyclerViewRequests);
         scrollView = root.findViewById(R.id.scrollView2);
         txtUsersHead = root.findViewById(R.id.txtUsersHead);
-        fillFields();
+
+        try {
+            fillFields();
+        }catch (Exception e){
+            Toast.makeText(root.getContext(), "Counldn't Referesh", Toast.LENGTH_SHORT).show();
+        }
+
 
         // seting recycler view
         lsUser = new ArrayList<>();
 
-        profileAdapter = new ProfileAdapter(lsUser, root.getContext(), Params.getREQUESTS());
+        profileAdapter = new ProfileAdapter(lsUser, root.getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
         recyclerView.setAdapter(profileAdapter);
 

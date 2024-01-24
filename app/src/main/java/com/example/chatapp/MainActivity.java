@@ -3,6 +3,10 @@ package com.example.chatapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 
@@ -30,12 +35,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         auth = FirebaseAuth.getInstance();
-        Params params = new Params();
         if (auth.getCurrentUser() == null){
             Intent i = new Intent(this, Login.class);
             startActivity(i);
             finish();
        }else {
+            Params params = new Params();
             // fill user details
             Params.getREFERENCE().child(auth.getCurrentUser().getUid()).addValueEventListener(
                     new ValueEventListener() {
@@ -44,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
                             // user id, name and number set
                             UserModel user = dataSnapshot.getValue(UserModel.class);
 
-                            if(dataSnapshot.child(Params.getFcmToken()).exists())
-                                user.setFCM_USER_TOKEN(dataSnapshot.child(Params.getFcmToken()).getValue().toString());
+                            setFcmToken();
 
                             user.setUserId(dataSnapshot.getKey());
 
@@ -78,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
                     }
             );
 
-            PushNotification pushNotification = new PushNotification();
-            pushNotification.getFcmToken();
-
             binding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
 
@@ -94,5 +95,17 @@ public class MainActivity extends AppCompatActivity {
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
             NavigationUI.setupWithNavController(binding.navView, navController);
         }
+    }
+
+    private void setFcmToken(){
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(
+                new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        Params.getCurrentUserModel().setFCM_USER_TOKEN(s);
+                        Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getFcmToken()).setValue(s);
+                    }
+                }
+        );
     }
 }

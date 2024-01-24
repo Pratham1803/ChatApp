@@ -66,9 +66,9 @@ public class Params {
         return REFERENCE;
     }
 
-    public static String getCURRENT_USER() {
-        return CURRENT_USER;
-    }
+    //public static String getCURRENT_USER() {
+      //  return CURRENT_USER;
+    //}
 
     public static String getTABLE() {
         return TABLE;

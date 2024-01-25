@@ -16,10 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapp.Params;
+import com.example.chatapp.PushNotification;
 import com.example.chatapp.R;
 import com.example.chatapp.UserModel;
 import com.example.chatapp.UserType;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -146,6 +150,15 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Toast.makeText(context, "Request Sent!", Toast.LENGTH_SHORT).show();
+                                        Params.getREFERENCE().child(frndUser).child(Params.getFcmToken()).get().addOnSuccessListener(
+                                                new OnSuccessListener<DataSnapshot>() {
+                                                    @Override
+                                                    public void onSuccess(DataSnapshot dataSnapshot) {
+                                                        String Frnd_FCM_Token = dataSnapshot.getValue().toString();
+                                                        sentNotification(Frnd_FCM_Token);
+                                                    }
+                                                }
+                                        );
                                         changeButtonReuest(btn,frndUser,pos);
                                     }
                                 }
@@ -159,5 +172,29 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return localDataSet.size();
+    }
+
+    private void sentNotification(String FRIEND_FCM_TOKEN){
+        try {
+            JSONObject jsonObject = new JSONObject();
+
+            JSONObject notificationObject = new JSONObject();
+            notificationObject.put("title","New Request");
+            notificationObject.put("body", Params.getCurrentUserModel().getUserName());
+            notificationObject.put("image", Params.getCurrentUserModel().getUserProfilePic());
+            notificationObject.put("myicon", "@drawable/ic_stat_name");
+
+            JSONObject dataObj = new JSONObject();
+            dataObj.put("Screen","Profile");
+            dataObj.put("userId",Params.getCurrentUserModel().getUserId());
+
+            jsonObject.put("notification",notificationObject);
+            jsonObject.put("data",dataObj);
+
+            jsonObject.put("to",FRIEND_FCM_TOKEN);
+            PushNotification.callApi(jsonObject);
+        }catch (Exception e){
+            Log.d("ErrorMsg", "sendNotification: "+e.toString());
+        }
     }
 }

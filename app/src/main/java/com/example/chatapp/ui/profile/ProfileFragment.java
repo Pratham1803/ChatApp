@@ -299,6 +299,10 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    public Button getBtnRequest() {
+        return btnRequest;
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

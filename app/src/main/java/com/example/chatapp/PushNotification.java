@@ -13,6 +13,18 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class PushNotification extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -51,4 +63,27 @@ public class PushNotification extends FirebaseMessagingService {
 
     }
 
+    public static void callApi(JSONObject jsonObject){
+        MediaType JSON = MediaType.get("application/json");
+
+        OkHttpClient client = new OkHttpClient();
+        String url = "https://fcm.googleapis.com/fcm/send";
+        RequestBody body = RequestBody.create(jsonObject.toString(),JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .header("Authorization","Bearer AAAA48ezQus:APA91bFkoZM761TQ0ji6w5tyAU1-y5fHIF5beKMTo0eNoxa2Up0GSgjaqhByEZurX4tgTUaF0t9l_xAl07RqE2A6annIQId2UgrRQfPODodrABDZxRFVDn_29U-ZZbw3uxbffGhRfitI")
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d("ErrorMsg", "onFailure: Send Notification "+e.toString());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                Log.d("ErrorMsg", "onResponse: Send Notification = "+response.message());
+            }
+        });
+    }
 }

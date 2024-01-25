@@ -2,11 +2,14 @@ package com.example.chatapp;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
+
+import org.json.JSONObject;
 
 public class UserType {
     private final Context context;
@@ -62,7 +65,42 @@ public class UserType {
                     }
                 }
         );
+
         btn.setEnabled(false);
+        Params.getREFERENCE().child(frndUser).child(Params.getFcmToken()).get().addOnSuccessListener(
+                new OnSuccessListener<DataSnapshot>() {
+                    @Override
+                    public void onSuccess(DataSnapshot dataSnapshot) {
+                        String FCM_TOKEN = dataSnapshot.getValue().toString();
+                        sentNotification(FCM_TOKEN);
+                    }
+                }
+        );
+    }
+
+    // send notification of request accepted
+    private void sentNotification(String FRND_FCM_TOKEN){
+        try {
+            JSONObject jsonObject = new JSONObject();
+
+            JSONObject notificationObject = new JSONObject();
+            notificationObject.put("title","New Friend Added!!");
+            notificationObject.put("body", "Request Accepted by, "+Params.getCurrentUserModel().getUserName()+".\nStart Chatting Now!!");
+            notificationObject.put("image", Params.getCurrentUserModel().getUserProfilePic());
+            notificationObject.put("myicon", "@drawable/ic_stat_name");
+
+            JSONObject dataObj = new JSONObject();
+            dataObj.put("Screen","Chat");
+            dataObj.put("userId",Params.getCurrentUserModel().getUserId());
+
+            jsonObject.put("notification",notificationObject);
+            jsonObject.put("data",dataObj);
+
+            jsonObject.put("to",FRND_FCM_TOKEN);
+            PushNotification.callApi(jsonObject);
+        }catch (Exception e){
+            Log.d("ErrorMsg", "sendNotification: "+e.toString());
+        }
     }
 
     // request cancel

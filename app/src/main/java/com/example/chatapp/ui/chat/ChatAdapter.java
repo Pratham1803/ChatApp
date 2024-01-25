@@ -17,6 +17,10 @@ import com.bumptech.glide.Glide;
 import com.example.chatapp.Params;
 import com.example.chatapp.R;
 import com.example.chatapp.UserModel;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -27,14 +31,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ImageView imgProfilePic;
         private final TextView txtUserName;
+        private final TextView txtMessage;
         private final Button button;
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
             imgProfilePic = view.findViewById(R.id.imgUserProfile);
             txtUserName = view.findViewById(R.id.txtUserListName);
+            txtMessage = view.findViewById(R.id.txtMessage);
+
             button = view.findViewById(R.id.btnAddUserInList);
-            button.setVisibility(View.INVISIBLE);
+            button.setVisibility(View.GONE);
+        }
+
+        public TextView getTxtMessage() {
+            return txtMessage;
         }
 
         public ImageView getImgProfilePic() {
@@ -69,6 +80,34 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
         if(localDataSet.get(position).getUserProfilePic()!=null)
             Glide.with(context).load(localDataSet.get(position).getUserProfilePic()).into(holder.getImgProfilePic());
+
+        Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getCHAT()).child(localDataSet.get(position).getUserId())
+                .orderByKey().limitToLast(1)
+                .addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot post: snapshot.getChildren()){
+                            String msg = post.child("chat").getValue().toString();
+                            String user = post.child("user_ID").getValue().toString();
+
+                            if(user.equals(Params.getCurrentUserModel().getUserId()))
+                                msg = "You : "+msg;
+                            else
+                                msg = localDataSet.get(position).getUserName() + " : "+msg;
+
+                            holder.getTxtMessage().setText(msg);
+                            holder.getTxtMessage().setVisibility(View.VISIBLE);
+                            break;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                }
+        );
 
         holder.itemView.setOnClickListener(
                 new View.OnClickListener() {

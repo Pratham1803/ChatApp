@@ -3,7 +3,12 @@ package com.example.chatapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
 
+import com.example.chatapp.ui.chat.ChatFragment;
+import com.example.chatapp.ui.profile.ProfileFragment;
+import com.example.chatapp.ui.users.UsersFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -17,6 +22,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.chatapp.databinding.ActivityMainBinding;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,23 +32,22 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
-    private ActivityMainBinding binding;
-    private FirebaseAuth auth;
-
+    BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() == null){
+        bottomNavigationView = findViewById(R.id.bottom_nav_view);
+
+        Params params = new Params();
+        if (Params.getAUTH().getCurrentUser() == null){
             Intent i = new Intent(this, Login.class);
             startActivity(i);
             finish();
        }else {
-            Params params = new Params();
             // fill user details
-            Params.getREFERENCE().child(auth.getCurrentUser().getUid()).addValueEventListener(
+            Params.getREFERENCE().child(Params.getAUTH().getCurrentUser().getUid()).addValueEventListener(
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -82,18 +87,24 @@ public class MainActivity extends AppCompatActivity {
                     }
             );
 
-            binding = ActivityMainBinding.inflate(getLayoutInflater());
-            setContentView(binding.getRoot());
-
-            BottomNavigationView navView = findViewById(R.id.nav_view);
-            // Passing each menu ID as a set of Ids because each
-            // menu should be considered as top level destinations.
-            AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.navigation_chat, R.id.navigation_profile, R.id.navigation_users)
-                    .build();
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-            NavigationUI.setupWithNavController(binding.navView, navController);
+            bottomNavigationView.setOnItemSelectedListener(
+                    new NavigationBarView.OnItemSelectedListener() {
+                        @Override
+                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                            if(item.getItemId() == R.id.navigation_profile){
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,new ProfileFragment()).commit();
+                            }
+                            if(item.getItemId() == R.id.navigation_chat){
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,new ChatFragment()).commit();
+                            }
+                            if(item.getItemId() == R.id.navigation_users){
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,new UsersFragment()).commit();
+                            }
+                            return true;
+                        }
+                    }
+            );
+            bottomNavigationView.setSelectedItemId(R.id.navigation_chat);
         }
     }
 

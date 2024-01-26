@@ -59,7 +59,6 @@ public class ProfileFragment extends Fragment {
     private ProfileAdapter profileAdapter;
     private List<UserModel> lsUser;
     private TextView txtUsersHead;
-    private @NonNull FragmentProfileBinding binding;
 
     // Update button clicked
     public void btnUpdate_Clicked() {
@@ -220,8 +219,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        binding = FragmentProfileBinding.inflate(inflater, container, false);
-        root = binding.getRoot();
+        root = inflater.inflate(R.layout.fragment_profile,container,false);
 
         // initilizing variables
         imgProfile = root.findViewById(R.id.imgProfilePic);
@@ -301,11 +299,5 @@ public class ProfileFragment extends Fragment {
 
     public Button getBtnRequest() {
         return btnRequest;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 }

@@ -33,12 +33,15 @@ public class SplashScreen extends AppCompatActivity {
                 startActivity(new Intent(SplashScreen.this, MainActivity.class));
                 finish();
 
+                Log.d("DataObj", "onCreate: Splash id = "+ frndUserId);
+                Log.d("DataObj", "onCreate: Splash Screen = "+ ScreenToOpen);
+
                 if (ScreenToOpen.equals("Chat"))
                     openChatScreen(frndUserId);
                 else if (ScreenToOpen.equals("Profile"))
                     openProfileScreen();
             }catch (Exception e){
-                Log.d("ErrorMsg", "onCreate: "+e.getMessage());
+                Log.d("ErrorMsg", "onCreate: Splash Screen "+e.getMessage());
             }
         }else {
             new Handler().postDelayed(new Runnable() {
@@ -74,7 +77,7 @@ public class SplashScreen extends AppCompatActivity {
                             intent.putExtra("userData",bundle);
                             startActivity(intent);
                         }catch (Exception e){
-                            Log.d("ErrorMsg", "onDataChange: "+e.toString());
+                            Log.d("ErrorMsg", "onDataChange: Splash Screen "+e.toString());
                         }
                     }
 
@@ -87,7 +90,6 @@ public class SplashScreen extends AppCompatActivity {
     }
     private void openProfileScreen(){
         Fragment fragment = new ProfileFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment);
-
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,fragment);
     }
 }

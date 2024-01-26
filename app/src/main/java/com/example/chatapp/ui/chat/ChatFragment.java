@@ -26,7 +26,6 @@ import java.util.List;
 
 public class ChatFragment extends Fragment {
     private View root;
-    private @NonNull FragmentChatBinding binding;
 
     // Data members
     RecyclerView recyclerView;
@@ -36,8 +35,7 @@ public class ChatFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        binding = FragmentChatBinding.inflate(inflater, container, false);
-        this.root = binding.getRoot();
+        root = inflater.inflate(R.layout.fragment_chat, container, false);
 
         // initilizing
         this.recyclerView = root.findViewById(R.id.recyclerViewChat);
@@ -79,11 +77,5 @@ public class ChatFragment extends Fragment {
         );
 
         return root;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 }

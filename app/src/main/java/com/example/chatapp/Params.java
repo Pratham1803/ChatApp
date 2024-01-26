@@ -9,7 +9,6 @@ import com.google.firebase.storage.StorageReference;
 public class Params {
     private static String  TABLE;
     private static UserModel CURRENT_USER_MODEL;
-    private static String CURRENT_USER;
     private static String  CONTACT_NUM;
     private static String NAME;
     private static String PROFILE_PIC;
@@ -31,7 +30,6 @@ public class Params {
         REQUESTS = "requestsList";
         DATABASE = FirebaseDatabase.getInstance();
         REFERENCE = DATABASE.getReference(TABLE);
-        CURRENT_USER = FirebaseAuth.getInstance().getCurrentUser().getUid();
         STORAGE = FirebaseStorage.getInstance().getReference();
         AUTH = FirebaseAuth.getInstance();
         CHAT = "Chat";
@@ -66,10 +64,6 @@ public class Params {
         return REFERENCE;
     }
 
-    //public static String getCURRENT_USER() {
-      //  return CURRENT_USER;
-    //}
-
     public static String getTABLE() {
         return TABLE;
     }
@@ -98,4 +92,3 @@ public class Params {
         return FCM_TOKEN;
     }
 }
-

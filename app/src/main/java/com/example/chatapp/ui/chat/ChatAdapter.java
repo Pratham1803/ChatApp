@@ -83,7 +83,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
         Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getCHAT()).child(localDataSet.get(position).getUserId())
                 .orderByKey().limitToLast(1)
-                .addListenerForSingleValueEvent(
+                .addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {

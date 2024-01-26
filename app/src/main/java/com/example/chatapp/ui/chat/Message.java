@@ -152,6 +152,4 @@ public class Message extends AppCompatActivity {
             Log.d("ErrorMsg", "sendNotification: "+e.toString());
         }
     }
-
-
 }

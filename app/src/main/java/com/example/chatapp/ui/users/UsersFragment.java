@@ -24,17 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsersFragment extends Fragment {
+    View root;
     private Params params;
-    private FragmentUsersBinding binding;
     private RecyclerView recyclerViewUsers;
     private UsersAdapter customAdapter;
     private List<UserModel> lsUSer;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        binding = FragmentUsersBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        root = inflater.inflate(R.layout.fragment_users, container, false);
 
         this.lsUSer = new ArrayList<>();
         this.recyclerViewUsers = root.findViewById(R.id.recyclerViewAllUsers);
@@ -83,11 +81,5 @@ public class UsersFragment extends Fragment {
                 }
         );
         return root;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 }

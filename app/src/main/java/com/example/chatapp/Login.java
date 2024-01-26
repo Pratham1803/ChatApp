@@ -31,11 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.concurrent.TimeUnit;
 
 public class Login extends AppCompatActivity {
-
-    // Firebase variiables
-    FirebaseAuth auth = FirebaseAuth.getInstance();
-
-    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    Params params = new Params();
     String verificationId;
 
     // declaring required buttons and edittext views
@@ -63,9 +59,9 @@ public class Login extends AppCompatActivity {
             // if user entering Name
         } else if (edNum.getHint().toString().equals(getResources().getString(R.string.edUserNameHint))) {
             UserModel newUser = new UserModel();
-            newUser.setUserId(auth.getCurrentUser().getUid()); // collecting current user UID
+            newUser.setUserId(Params.getAUTH().getCurrentUser().getUid()); // collecting current user UID
             newUser.setUserName(edText); // collecting name from textbox
-            newUser.setUserContactNum(auth.getCurrentUser().getPhoneNumber()); // current user mobile number
+            newUser.setUserContactNum(Params.getAUTH().getCurrentUser().getPhoneNumber()); // current user mobile number
             registerNewUser(newUser); // registering new user in database
         }
     }
@@ -97,11 +93,10 @@ public class Login extends AppCompatActivity {
 
     // if there is new user then register in database
     private void registerNewUser(UserModel user){
-        DatabaseReference root = db.getReference("tblUser");
 
         UserModel newUser = new UserModel(user.getUserContactNum(),user.getUserName());
         // adding new user in database
-        root.child(user.getUserId()).setValue(newUser).addOnSuccessListener(
+        Params.getREFERENCE().child(user.getUserId()).setValue(newUser).addOnSuccessListener(
                 // user registered successfully then redirect to the main activity
                 new OnSuccessListener<Void>() {
                     @Override
@@ -129,7 +124,7 @@ public class Login extends AppCompatActivity {
     private void signInWithCredential(PhoneAuthCredential credential) {
         // inside this method we are checking if
         // the code entered is correct or not.
-        auth.signInWithCredential(credential)
+        Params.getAUTH().signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -140,8 +135,7 @@ public class Login extends AppCompatActivity {
                             user.setUserContactNum(task.getResult().getUser().getPhoneNumber().toString());
 
                             // checking that given user is registered or not in the database
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("tblUser");
-                            ref.addValueEventListener(
+                            Params.getREFERENCE().addValueEventListener(
                                     new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -186,7 +180,7 @@ public class Login extends AppCompatActivity {
         // this method is used for getting
         // OTP on user phone number.
         PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(auth)
+                PhoneAuthOptions.newBuilder(Params.getAUTH())
                         .setPhoneNumber(number)		 // Phone number to verify
                         .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
                         .setActivity(this)				 // Activity (for callback binding)

@@ -90,7 +90,7 @@ public class UserType {
             notificationObject.put("myicon", "@drawable/ic_stat_name");
 
             JSONObject dataObj = new JSONObject();
-            dataObj.put("Screen","Chat");
+            dataObj.put("Screen","Profile");
             dataObj.put("userId",Params.getCurrentUserModel().getUserId());
 
             jsonObject.put("notification",notificationObject);

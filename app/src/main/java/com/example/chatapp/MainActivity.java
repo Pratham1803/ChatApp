@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         Params params = new Params();
         if (Params.getAUTH().getCurrentUser() == null){
-            Intent i = new Intent(this, Login.class);
+            Intent i = new Intent(MainActivity.this, Login.class);
             startActivity(i);
             finish();
        }else {

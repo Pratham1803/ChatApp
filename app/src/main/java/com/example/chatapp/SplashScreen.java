@@ -26,15 +26,21 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        if(getIntent().getExtras()!= null){
+        String ScreenToOpen;
+        try {
+        ScreenToOpen = getIntent().getStringExtra("Screen");
+        }catch (Exception e){ScreenToOpen = null;}
+
+        if(ScreenToOpen != null){
             try {
                 String frndUserId = getIntent().getExtras().getString("userId");
-                String ScreenToOpen = getIntent().getExtras().getString("Screen");
-                startActivity(new Intent(SplashScreen.this, MainActivity.class));
-                finish();
 
                 Log.d("DataObj", "onCreate: Splash id = "+ frndUserId);
                 Log.d("DataObj", "onCreate: Splash Screen = "+ ScreenToOpen);
+
+                Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                startActivity(i);
+                finish();
 
                 if (ScreenToOpen.equals("Chat"))
                     openChatScreen(frndUserId);
@@ -55,7 +61,6 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     private void openChatScreen(String frndUserId){
-        Intent intent = new Intent(this, Message.class);
         Params.getREFERENCE().child(frndUserId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -73,7 +78,7 @@ public class SplashScreen extends AppCompatActivity {
                             bundle.putString("frndPic",newUser.getUserProfilePic());
                             bundle.putString("fcmToken",newUser.getFCM_USER_TOKEN());
 
-                            Intent intent = new Intent(getBaseContext(), Message.class);
+                            Intent intent = new Intent(SplashScreen.this, Message.class);
                             intent.putExtra("userData",bundle);
                             startActivity(intent);
                         }catch (Exception e){

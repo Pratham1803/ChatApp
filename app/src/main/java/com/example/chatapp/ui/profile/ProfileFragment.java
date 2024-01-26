@@ -244,7 +244,7 @@ public class ProfileFragment extends Fragment {
         // seting recycler view
         lsUser = new ArrayList<>();
 
-        profileAdapter = new ProfileAdapter(lsUser, root.getContext());
+        profileAdapter = new ProfileAdapter(lsUser, getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
         recyclerView.setAdapter(profileAdapter);
 

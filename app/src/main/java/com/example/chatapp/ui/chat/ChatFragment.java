@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chatapp.MainActivity;
 import com.example.chatapp.Params;
 import com.example.chatapp.R;
 import com.example.chatapp.UserModel;
@@ -41,7 +42,7 @@ public class ChatFragment extends Fragment {
         this.recyclerView = root.findViewById(R.id.recyclerViewChat);
         this.lsUsers = new ArrayList<>();
 
-        this.chatAdapter = new ChatAdapter(lsUsers,root.getContext());
+        this.chatAdapter = new ChatAdapter(lsUsers, getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
         recyclerView.setAdapter(chatAdapter);
 

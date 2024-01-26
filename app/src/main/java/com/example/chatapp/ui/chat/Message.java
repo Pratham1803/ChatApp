@@ -63,12 +63,12 @@ public class Message extends AppCompatActivity {
             CURRENT_USER_REF.push().setValue(chatModel);
 
             FRIEND_USER_REF.push().setValue(chatModel);
-            chatAdapter.notifyDataSetChanged();
+            //chatAdapter.notifyDataSetChanged();
             edMsgBox.setText("");
 
             sendNotification(Msg);
         }else
-            Toast.makeText(this, "Enter the Message!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Message.this, "Enter the Message!!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -97,7 +97,7 @@ public class Message extends AppCompatActivity {
         Log.d("chat", "onCreate: "+FRIEND_USER_ID);
         // adapter and recycler view settings
         arrChat = new ArrayList<>();
-        chatAdapter = new MsgAdapter(arrChat,this,txtFrndName.getText().toString());
+        chatAdapter = new MsgAdapter(arrChat,Message.this,txtFrndName.getText().toString());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);

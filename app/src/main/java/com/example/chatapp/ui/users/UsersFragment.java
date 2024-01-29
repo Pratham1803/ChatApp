@@ -82,4 +82,49 @@ public class UsersFragment extends Fragment {
         );
         return root;
     }
+
+    public void funSearch(String text){
+        Params.getREFERENCE().addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        lsUSer.clear();
+                        for (DataSnapshot post : snapshot.getChildren()){
+                            if(post.getKey().equals(Params.getCurrentUserModel().getUserId()))
+                                continue;
+                            UserModel newUser = post.getValue(UserModel.class);
+                            newUser.setUserId(post.getKey());
+
+                            if(newUser.getUserName().contains(text)) {
+
+                                DataSnapshot s = post.child(Params.getFRIENDS());
+                                ArrayList<String> lsFriends = new ArrayList<>();
+                                if (s.exists()) {
+                                    Log.d("UserRecord", "onDataChange: " + s.getChildren());
+                                    for (DataSnapshot childSnap : s.getChildren())
+                                        lsFriends.add(childSnap.getValue().toString());
+                                }
+                                newUser.setFriends(lsFriends);
+
+                                ArrayList<String> lsRequests = new ArrayList<>();
+                                s = post.child(Params.getREQUESTS());
+                                if (s.exists()) {
+                                    Log.d("UserRecord", "onDataChange: " + s.getChildren());
+                                    for (DataSnapshot childSnap : s.getChildren())
+                                        lsRequests.add(childSnap.getValue().toString());
+                                }
+                                newUser.setRequests(lsRequests);
+                                lsUSer.add(newUser);
+                            }
+                        }
+                        customAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                }
+        );
+    }
 }

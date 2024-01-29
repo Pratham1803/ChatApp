@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_marginTop="73dp"
         android:layout_marginBottom="64dp"
         app:layout_constraintBottom_toTopOf="@+id/txtHeading"
@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/chat_app_icon" />
+        app:srcCompat="@drawable/app_icon" />
 
     <TextView
         android:id="@+id/txtHeading"

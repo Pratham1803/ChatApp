@@ -52,7 +52,6 @@ public class ProfileFragment extends Fragment {
     private ProgressBar progressBar;
     private Button btnUpdate;
     private Button btnMyFriend;
-    private Button btnLogOut;
     private Button btnRequest;
     private String ImageName;
     private RecyclerView recyclerView;
@@ -228,7 +227,6 @@ public class ProfileFragment extends Fragment {
         btnUpdate = root.findViewById(R.id.btnUpdate);
         btnMyFriend = root.findViewById(R.id.btnMyFriends);
         btnRequest = root.findViewById(R.id.btnRequest);
-        btnLogOut = root.findViewById(R.id.btnLogOut);
         progressBar = root.findViewById(R.id.progressBar2);
         recyclerView = root.findViewById(R.id.recyclerViewRequests);
         scrollView = root.findViewById(R.id.scrollView2);
@@ -271,16 +269,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 btnFriends_Clicked();
-            }
-        });
-
-        btnLogOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Params.getAUTH().signOut();
-                Intent i = new Intent(root.getContext(), MainActivity.class);
-                startActivity(i);
-                getActivity().finish();
             }
         });
 

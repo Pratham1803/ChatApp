@@ -52,7 +52,7 @@
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:contentDescription="@string/developer"
-                    android:src="@drawable/baseline_account"
+                    android:src="@drawable/ic_account"
                     android:scaleType="centerCrop"/>
             </androidx.cardview.widget.CardView>
 
@@ -101,17 +101,6 @@
                 android:layout_marginTop="50sp"
                 android:layout_marginStart="10sp"
                 android:layout_marginEnd="10sp"/>
-
-            <Button
-                android:id="@+id/btnLogOut"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:text="Log Out"
-                android:layout_marginStart="10sp"
-                android:layout_marginEnd="10sp"
-                android:layout_marginBottom="50sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

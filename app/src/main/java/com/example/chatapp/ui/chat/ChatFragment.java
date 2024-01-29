@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -78,5 +79,38 @@ public class ChatFragment extends Fragment {
         );
 
         return root;
+    }
+
+    public void funSearch(String text){
+        Params.getREFERENCE().addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        lsUsers.clear();
+                        for(DataSnapshot post : snapshot.getChildren()){
+                            if(Params.getCurrentUserModel().getFriends().contains(post.getKey())){
+                                try {
+                                    UserModel newUser = post.getValue(UserModel.class);
+                                    newUser.setUserId(post.getKey());
+
+                                    if(post.child(Params.getFcmToken()).exists())
+                                        newUser.setFCM_USER_TOKEN(post.child(Params.getFcmToken()).getValue().toString());
+
+                                    if(newUser.getUserName().contains(text))
+                                        lsUsers.add(newUser);
+                                }catch (Exception e){
+                                    Log.d("ErrorMsg", "onDataChange: "+e.toString());
+                                }
+                            }
+                        }
+                        chatAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                }
+        );
     }
 }

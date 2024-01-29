@@ -3,10 +3,13 @@ package com.example.chatapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.example.chatapp.ui.chat.ChatFragment;
+import com.example.chatapp.ui.profile.ProfileAdapter;
 import com.example.chatapp.ui.profile.ProfileFragment;
 import com.example.chatapp.ui.users.UsersFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,6 +19,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -30,9 +36,16 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
+    Toolbar toolbar;
+    SearchView searchView;
+    ProfileFragment profileFragment;
+    ChatFragment chatFragment;
+    UsersFragment usersFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +59,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             finish();
        }else {
+            profileFragment = new ProfileFragment();
+            chatFragment = new ChatFragment();
+            usersFragment = new UsersFragment();
+            toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
             // fill user details
             Params.getREFERENCE().child(Params.getAUTH().getCurrentUser().getUid()).addValueEventListener(
                     new ValueEventListener() {
@@ -92,13 +111,13 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                             if(item.getItemId() == R.id.navigation_profile){
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,new ProfileFragment()).commit();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,profileFragment).commit();
                             }
                             if(item.getItemId() == R.id.navigation_chat){
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,new ChatFragment()).commit();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,chatFragment).commit();
                             }
                             if(item.getItemId() == R.id.navigation_users){
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,new UsersFragment()).commit();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,usersFragment).commit();
                             }
                             return true;
                         }
@@ -118,5 +137,49 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.header_menu,menu);
+
+        MenuItem menuItem = menu.findItem(R.id.btnSearch);
+        searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                btnSearch_Clicked(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                btnSearch_Clicked(newText);
+                return true;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.menuLogOut) {
+            Params.getAUTH().signOut();
+            this.recreate();
+        }
+
+        return true;
+    }
+
+    private void btnSearch_Clicked(String text){
+        Fragment current_Fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_frame_view);
+
+        if(current_Fragment instanceof ChatFragment){
+            chatFragment.funSearch(text);
+        } else if (current_Fragment instanceof UsersFragment) {
+            usersFragment.funSearch(text);
+        }
     }
 }

@@ -15,9 +15,13 @@ import android.widget.Space;
 
 import com.example.chatapp.ui.chat.Message;
 import com.example.chatapp.ui.profile.ProfileFragment;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.ArrayList;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -53,8 +57,16 @@ public class SplashScreen extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    startActivity(new Intent(SplashScreen.this, MainActivity.class));
-                    finish();
+                    Params params = new Params();
+                    if (Params.getAUTH().getCurrentUser() == null){
+                        Intent i = new Intent(SplashScreen.this, Login.class);
+                        startActivity(i);
+                        finish();
+                    }else {
+                        fillCurrentUser();
+                        startActivity(new Intent(SplashScreen.this, MainActivity.class));
+                        finish();
+                    }
                 }
             }, 1500);
         }
@@ -96,5 +108,58 @@ public class SplashScreen extends AppCompatActivity {
     private void openProfileScreen(){
         Fragment fragment = new ProfileFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,fragment);
+    }
+    private void setFcmToken(){
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(
+                new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        Params.getCurrentUserModel().setFCM_USER_TOKEN(s);
+                        Params.getREFERENCE().child(Params.getCurrentUserModel().getUserId()).child(Params.getFcmToken()).setValue(s);
+                    }
+                }
+        );
+    }
+
+    public void fillCurrentUser(){
+        Params.getREFERENCE().child(Params.getAUTH().getCurrentUser().getUid()).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        // user id, name and number set
+                        UserModel user = dataSnapshot.getValue(UserModel.class);
+
+                        setFcmToken();
+
+                        user.setUserId(dataSnapshot.getKey());
+
+                        // users friend list
+                        DataSnapshot s = dataSnapshot.child(Params.getFRIENDS());
+                        ArrayList<String> lsFriends = new ArrayList<>();
+                        if(s.exists()) {
+                            Log.d("UserRecord", "onDataChange: " + s.getChildren());
+                            for(DataSnapshot childSnap : s.getChildren())
+                                lsFriends.add(childSnap.getValue().toString());
+                        }
+                        user.setFriends(lsFriends);
+
+                        // users requests list
+                        ArrayList<String> lsRequests = new ArrayList<>();
+                        s = dataSnapshot.child(Params.getREQUESTS());
+                        if(s.exists()) {
+                            Log.d("UserRecord", "onDataChange: " + s.getChildren());
+                            for(DataSnapshot childSnap : s.getChildren())
+                                lsRequests.add(childSnap.getValue().toString());
+                        }
+                        user.setRequests(lsRequests);
+
+                        Params.setCurrentUserModel(user);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                }
+        );
     }
 }

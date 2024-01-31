@@ -1,5 +1,6 @@
 package com.example.chatapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -54,77 +56,30 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_nav_view);
 
         Params params = new Params();
-        if (Params.getAUTH().getCurrentUser() == null){
-            Intent i = new Intent(MainActivity.this, Login.class);
-            startActivity(i);
-            finish();
-       }else {
-            profileFragment = new ProfileFragment();
-            chatFragment = new ChatFragment();
-            usersFragment = new UsersFragment();
-            toolbar = findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
 
-            // fill user details
-            Params.getREFERENCE().child(Params.getAUTH().getCurrentUser().getUid()).addValueEventListener(
-                    new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            // user id, name and number set
-                            UserModel user = dataSnapshot.getValue(UserModel.class);
+        profileFragment = new ProfileFragment();
+        chatFragment = new ChatFragment();
+        usersFragment = new UsersFragment();
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-                            setFcmToken();
-
-                            user.setUserId(dataSnapshot.getKey());
-
-                            // users friend list
-                            DataSnapshot s = dataSnapshot.child(Params.getFRIENDS());
-                            ArrayList<String> lsFriends = new ArrayList<>();
-                            if(s.exists()) {
-                                Log.d("UserRecord", "onDataChange: " + s.getChildren());
-                                for(DataSnapshot childSnap : s.getChildren())
-                                    lsFriends.add(childSnap.getValue().toString());
-                            }
-                            user.setFriends(lsFriends);
-
-                            // users requests list
-                            ArrayList<String> lsRequests = new ArrayList<>();
-                            s = dataSnapshot.child(Params.getREQUESTS());
-                            if(s.exists()) {
-                                Log.d("UserRecord", "onDataChange: " + s.getChildren());
-                                for(DataSnapshot childSnap : s.getChildren())
-                                    lsRequests.add(childSnap.getValue().toString());
-                            }
-                            user.setRequests(lsRequests);
-
-                            Params.setCurrentUserModel(user);
+        bottomNavigationView.setOnItemSelectedListener(
+                new NavigationBarView.OnItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        if(item.getItemId() == R.id.navigation_profile){
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,profileFragment).commit();
                         }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
+                        if(item.getItemId() == R.id.navigation_chat){
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,chatFragment).commit();
                         }
+                        if(item.getItemId() == R.id.navigation_users){
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,usersFragment).commit();
+                        }
+                        return true;
                     }
-            );
-
-            bottomNavigationView.setOnItemSelectedListener(
-                    new NavigationBarView.OnItemSelectedListener() {
-                        @Override
-                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                            if(item.getItemId() == R.id.navigation_profile){
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,profileFragment).commit();
-                            }
-                            if(item.getItemId() == R.id.navigation_chat){
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,chatFragment).commit();
-                            }
-                            if(item.getItemId() == R.id.navigation_users){
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame_view,usersFragment).commit();
-                            }
-                            return true;
-                        }
-                    }
-            );
-            bottomNavigationView.setSelectedItemId(R.id.navigation_chat);
-        }
+                });
+        bottomNavigationView.setSelectedItemId(R.id.navigation_chat);
     }
 
     private void setFcmToken(){
@@ -166,8 +121,30 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if(id == R.id.menuLogOut) {
-            Params.getAUTH().signOut();
-            this.recreate();
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage("Are you sure, to Log Out?");
+            builder.setTitle("Log Out");
+            builder.setIcon(R.drawable.app_icon);
+            builder.setCancelable(false);
+
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Params.getAUTH().signOut();
+                    startActivity(new Intent(MainActivity.this, Login.class));
+                    finish();
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
 
         return true;

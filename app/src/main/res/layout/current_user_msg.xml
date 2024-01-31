@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentEnd="true"
@@ -17,6 +16,13 @@
     app:cardCornerRadius="25sp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent">
+
+    <Button
+        android:id="@+id/btnDeleteChat"
+        android:layout_width="120sp"
+        android:layout_height="50sp"
+        android:text="Delete"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/textView3"

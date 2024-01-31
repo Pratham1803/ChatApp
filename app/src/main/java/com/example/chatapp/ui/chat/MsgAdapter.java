@@ -9,6 +9,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,14 +100,13 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull MsgAdapter.ViewHolder holder, int position) {
         try {
             if (localDataSet.get(position).getUSER_ID().equals(Params.getCurrentUserModel().getUserId())) {
-                holder.edUserMsg.setText(localDataSet.get(position).getCHAT());
+                holder.getEdUserMsg().setText(localDataSet.get(position).getCHAT());
             } else {
                 holder.getTxtFrndName().setText(FRND_USER_NAME);
-                holder.edFrndMsg.setText(localDataSet.get(position).getCHAT());
+                holder.getEdFrndMsg().setText(localDataSet.get(position).getCHAT());
             }
         }catch (IndexOutOfBoundsException ie){
             Log.d("Chat Error", "onBindViewHolder: "+ ie);
-
             context.startActivity(new Intent(context, MainActivity.class));
         }
     }

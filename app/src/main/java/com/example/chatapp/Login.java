@@ -101,6 +101,7 @@ public class Login extends AppCompatActivity {
                 new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
+                        new SplashScreen().fillCurrentUser();
                         startActivity(new Intent(Login.this,MainActivity.class));
                         finish();
                     }
